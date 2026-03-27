@@ -1,0 +1,10 @@
+# Dev backend runtime artifacts
+dev_backend.log
+dev_backend.pid
+
+# Local runtime data (do not commit)
+data/
+
+# OS/editor junk
+.DS_Store
+Thumbs.db
