@@ -19,7 +19,7 @@ mkdir -p "$DATA_DIR"
 LOG_DIR="tmp"
 TIMESTAMP="$(date +%Y%m%d-%H%M%S)"
 LOG_FILE="$LOG_DIR/backend-$TIMESTAMP.log"
-PID_FILE="dev_backend.pid"
+PID_FILE="$LOG_DIR/backend.pid"
 if [ -f "$PID_FILE" ] && kill -0 "$(cat "$PID_FILE" 2>/dev/null)" 2>/dev/null; then
   echo "[dev] 后端已在运行 (pid $(cat "$PID_FILE")); 跳过启动"
 else

@@ -13,7 +13,7 @@ BACKEND_DIR="backend/go"
 LOG_DIR="tmp"
 TIMESTAMP="$(date +%Y%m%d-%H%M%S)"
 LOG_FILE="$LOG_DIR/backend-$TIMESTAMP.log"
-PID_FILE="dev_backend.pid"
+PID_FILE="$LOG_DIR/backend.pid"
 
 stop_backend() {
   if [ -f "$PID_FILE" ]; then
