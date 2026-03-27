@@ -1,30 +1,73 @@
 // LLM 渲染规则 Markdown：可配置后端，否则本地回退
 let cfg = {}
 try { cfg = require('../config') } catch (e) { try { cfg = require('../config.sample') } catch (_) {} }
+const tmpl = require('../rules/template')
 
-function renderRuleMarkdown(nlText, schema) {
+function buildPrompt(nlText, schema) {
+  const required = ['## 桌面','## 庄家','## 结算','## 抓鸟','## 违例检查','## 番型']
+  const instructions = [
+    '你是麻将规则格式化助手。根据用户提供的自然语言描述，严格输出 Markdown 规则模版，供后续 AI 算分使用。',
+    '输出要求：',
+    '- 必须使用以下分节标题：## 桌面、## 庄家、## 结算、## 抓鸟、## 违例检查、## 番型。',
+    '- 顶部用一级标题 # 规则名称。紧随其后用引用 > 表示变体与版本。',
+    '- 各分节内使用短行项目列表。示例：- 人数：4。',
+    '- 番型分节需包含三级标题 ### 基础番型、### 杠类加番、### 额外加成，每项为列表“- 名称：番数”。',
+    '- 不要输出多余解释文本，不要包含除上述分节以外的任意段落。',
+    '参考结构化字段（供理解，不必原样输出 JSON）：',
+    JSON.stringify(schema)
+  ].join('\n')
+  return `${instructions}\n\n用户描述：\n${nlText}\n\n请严格按上述模版输出 Markdown。`
+}
+
+function renderOnce(prompt) {
   return new Promise((resolve, reject) => {
-    if (cfg && cfg.llm && cfg.llm.endpoint) {
-      wx.request({
-        url: cfg.llm.endpoint,
-        method: 'POST',
-        header: { 'content-type': 'application/json', ...(cfg.llm.headers || {}) },
-        data: { prompt: nlText, schema },
-        success: (res) => {
-          const data = res.data || {}
-          if (typeof data.markdown === 'string' && data.markdown.length > 0) {
-            resolve(data.markdown)
-          } else {
-            reject(new Error('LLM 返回缺少 markdown'))
-          }
-        },
-        fail: (err) => reject(new Error(err.errMsg || 'LLM 网络错误'))
-      })
+    if (!(cfg && cfg.llm && cfg.llm.endpoint)) {
+      reject(new Error('未配置 LLM endpoint'))
       return
     }
-    reject(new Error('未配置 LLM endpoint'))
+    wx.request({
+      url: cfg.llm.endpoint,
+      method: 'POST',
+      header: { 'content-type': 'application/json', ...(cfg.llm.headers || {}) },
+      data: { prompt },
+      success: (res) => {
+        const data = res.data || {}
+        if (typeof data.markdown === 'string' && data.markdown.length > 0) {
+          resolve(data.markdown)
+        } else if (typeof data.output === 'string' && data.output.length > 0) {
+          resolve(data.output)
+        } else {
+          reject(new Error('LLM 返回缺少 markdown'))
+        }
+      },
+      fail: (err) => reject(new Error(err.errMsg || 'LLM 网络错误'))
+    })
   })
 }
 
-module.exports = { renderRuleMarkdown }
+async function renderRuleMarkdownWithFeedback(nlText, schema, maxRetries = 2) {
+  let prompt = buildPrompt(nlText, schema)
+  let md = await renderOnce(prompt)
+  let ok = tmpl.validateMarkdown(md)
+  let retries = 0
+  while (!ok && retries < maxRetries) {
+    // 生成反馈：指出缺失分节并要求修正
+    const required = ['## 桌面','## 庄家','## 结算','## 抓鸟','## 违例检查','## 番型']
+    const missing = required.filter(k => !md.includes(k))
+    const feedback = [
+      '你生成的 Markdown 未通过规范校验，请严格修正：',
+      `缺失分节：${missing.join('、') || '无'}`,
+      '要求：',
+      '- 必须包含所有必需分节及列表格式；番型分节包含三级标题与列表条目。',
+      '- 保留用户原意，补全缺失信息；如描述缺失，请合理默认并标注。',
+      '请重新输出完整的 Markdown。'
+    ].join('\n')
+    const repairPrompt = `${prompt}\n\n上次输出：\n${md}\n\n校验反馈：\n${feedback}`
+    md = await renderOnce(repairPrompt)
+    ok = tmpl.validateMarkdown(md)
+    retries++
+  }
+  return { markdown: md, valid: ok }
+}
 
+module.exports = { renderRuleMarkdownWithFeedback }

@@ -11,12 +11,20 @@ Page({
     const { name, nl } = this.data
     if(!name || !nl){ wx.showToast({ title:'请填写名称与描述', icon:'none' }); return }
     try {
-      // 优先使用 LLM 渲染 Markdown；若失败则本地回退
-      let markdown = await llm.renderRuleMarkdown(nl, tmpl.schema)
-      if (!tmpl.validateMarkdown(markdown)) {
-        // 回退：本地 parse + 渲染
+      // 使用 LLM 渲染并带反馈循环；未配置或失败则本地回退
+      let markdown = ''
+      let ok = false
+      try {
+        const res = await llm.renderRuleMarkdownWithFeedback(nl, tmpl.schema, 2)
+        markdown = res.markdown
+        ok = res.valid
+      } catch (e) {
+        // 未配置或网络错误
+      }
+      if (!ok) {
         const obj = tmpl.buildRuleObject(name, nl)
         markdown = obj.templateMarkdown
+        ok = true
       }
       const html = md.mdToHtml(markdown)
       this.setData({ preview: markdown, html })

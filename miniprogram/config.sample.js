@@ -10,5 +10,11 @@ module.exports = {
     headers: {
       // 示例：Authorization: 'Bearer xxx', 'X-Custom-Token': '...' 等
     }
+  },
+  llm: {
+    endpoint: '', // 规则 Markdown 渲染的 LLM 服务端地址
+    headers: {
+      // 示例：Authorization: 'Bearer xxx'
+    }
   }
 }

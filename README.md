@@ -69,9 +69,9 @@ docs/
 - 违例检查：`checkNoDeclare`（查大叫）、`checkWrongSuit`（查花猪）
 - 番型：`scoring.baseHands/melds/extras`（示例：平胡、自摸、对对胡、清一色、明杠、暗杠、绝张等）
 
-模版渲染：`miniprogram/rules/template.js:1` 的 `renderTemplateText(rule)` 将结构化规则渲染为人类可读文本，供 AI 直接消费。
+模版渲染：`miniprogram/rules/template.js:1` 的 `renderTemplateMarkdown(rule)` 将结构化规则渲染为 Markdown，可直接被 AI 消费。
 预置“川麻·血战到底”已内置且标记为“预置”，不可删除：`miniprogram/rules/template.js:1`、`miniprogram/pages/rules/index.*`。
-自定义规则：在“新建规则”页输入名称与自然语言描述，调用 LLM 渲染为 Markdown 模版；保存前进行规范校验（必含“桌面/庄家/结算/抓鸟/违例检查/番型”等段落）。目前编辑功能暂时移除，仅支持新建与删除。
+自定义规则：在“新建规则”页输入名称与自然语言描述，调用 LLM 渲染为 Markdown 模版；保存前进行规范校验（必含“桌面/庄家/结算/抓鸟/违例检查/番型”等段落）。目前编辑功能暂时移除，仅支持新建与删除。LLM 渲染包含反馈闭环：若首次渲染不合格（缺分节等），系统会携带校验反馈要求 LLM 修正，最多重试 2 次；仍不合格则回退为本地解析渲染。
 
 ## 开发测试：重置数据
 - 应用内：房间列表页顶部用户区域点击“清空数据”按钮，确认后将清除本地的用户、房间、规则等全部缓存并回到登录页。
