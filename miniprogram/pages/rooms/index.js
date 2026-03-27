@@ -45,4 +45,15 @@ Page({
     wx.navigateTo({ url: `/pages/room/index?id=${id}` })
   },
   toRules() { wx.navigateTo({ url: '/pages/rules/index' }) }
+  ,
+  resetAll(){
+    wx.showModal({ title:'清空数据', content:'将清除本地的用户、房间、规则等所有数据。是否继续？', success:(res)=>{
+      if(res.confirm){
+        store.clearAll()
+        this.setData({ rooms: [], me: null })
+        wx.showToast({ title:'已清空', icon:'success' })
+        wx.redirectTo({ url: '/pages/auth/index' })
+      }
+    }})
+  }
 })

@@ -68,3 +68,10 @@ function setSelectedRule(id) { set(KEYS.selectedRule, id) }
 function getSelectedRule() { try { return wx.getStorageSync(KEYS.selectedRule) || null } catch (e) { return null } }
 
 module.exports = { KEYS, listRooms, createRoom, getRoom, saveRoom, addPlayerToRoom, listRules, createRule, setSelectedRule, getSelectedRule }
+
+// 清空所有本地存储（开发测试用）
+function clearAll() {
+  try { wx.clearStorageSync() } catch (e) {}
+}
+
+module.exports.clearAll = clearAll

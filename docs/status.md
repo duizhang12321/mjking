@@ -32,6 +32,8 @@
     - 轮次记录携带操作者：`userUid`
   - 登录授权体验修正：
     - 新增登录授权页：`miniprogram/pages/auth/index.*`（用户触发 `wx.getUserProfile`，授权后重定向到房间列表）；将其设为入口页。
+  - 测试辅助：
+    - 房间列表页支持“一键清空数据”按钮，调用 `wx.clearStorageSync` 清除本地用户、房间、规则等缓存：`miniprogram/pages/rooms/index.js:1`、`miniprogram/utils/storage.js:1`
 
 ## 待决事项（需要你在需求澄清文档补充）
 - 选择 AI 接入方式：直连服务端 或 云函数。
