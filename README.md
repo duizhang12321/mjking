@@ -44,11 +44,10 @@ docs/
   - 无配置：回退到本地模拟 `scoreImage`
 - 配置：复制 `miniprogram/config.sample.js:1` 为 `miniprogram/config.js` 并填写真实参数（切勿提交密钥）。
 
-## 真实登录态接入
-- 触发方式：登录页按钮点击后调用 `wx.login` 获取 `code`，随后调用 `wx.getUserProfile` 获取头像/昵称。
-- 上报绑定：`miniprogram/utils/auth.js:1` 将 `{ code, nickName, avatarUrl }` POST 到 `baseUrl + /api/auth/bind`，后端返回 `{ userId, token }`。
-- 本地存储：`miniprogram/utils/user.js:1` 将返回的 `userId/token` 合并到当前用户对象（`serverUserId`、`token`），用于后续鉴权与合规。
-- 失败回退：后端绑定失败时，回退为本地登录并提示“后端绑定失败，已本地登录”。
+## 登录认证（当前模式：本地）
+- 默认仅使用微信统一授权弹窗获取“头像/昵称”，不依赖后端绑定。
+- 触发方式：登录页点击“授权并进入”按钮调用 `wx.getUserProfile`；成功后将用户信息保存在本地（`utils/user.js:1`）。
+- 如需接入后端登录绑定，可启用 `utils/auth.js:1` 并配置 `miniprogram/config.js`，再将流程切换为 `wx.login` + 绑定接口。
 
 ## 页面与流程
 
