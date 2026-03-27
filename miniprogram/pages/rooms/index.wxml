@@ -1,5 +1,13 @@
 <view class="container">
   <view class="title">线下麻将房间</view>
+  <view class="block" style="margin-bottom:10px;">
+    <view class="label">用户</view>
+    <view wx:if="{{me}}" class="user">
+      <image wx:if="{{me.avatarUrl}}" class="avatar" src="{{me.avatarUrl}}"></image>
+      <text class="nick">{{me.nickName}}</text>
+    </view>
+    <button wx:else type="primary" size="mini" bindtap="login">登录授权</button>
+  </view>
   <view class="actions">
     <button type="primary" bindtap="createRoom">新建房间</button>
     <button bindtap="joinRoom">加入房间</button>

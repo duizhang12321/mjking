@@ -49,7 +49,8 @@ docs/
 - 房间列表页：`miniprogram/pages/rooms/index.*` 新建/进入房间、跳转规则管理
 - 房间详情页：`miniprogram/pages/room/index.*` 手动记分或拍照 AI 记分
 - 规则管理页：`miniprogram/pages/rules/index.*` 新建规则（骨架），支持关联到房间
- - 用户登录：首次进入会请求微信头像/昵称授权（`utils/user.js:1`），用于标识房主与玩家
+- 用户登录：首次进入会请求微信头像/昵称授权（`utils/user.js:1`），用于标识房主与玩家
+ - 登录授权需“用户触发”才能弹窗：请点击房间列表页顶部的“登录授权”按钮（而非页面加载时自动弹窗）。
 
 ## 接口约定建议
 

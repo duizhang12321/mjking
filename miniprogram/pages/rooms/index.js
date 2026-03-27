@@ -2,13 +2,13 @@ const store = require('../../utils/storage')
 const user = require('../../utils/user')
 
 Page({
-  data: { rooms: [] },
-  onShow() { this.setData({ rooms: store.listRooms() }) },
-  onLoad(){
-    // 提示登录以获取昵称头像
-    user.ensureLoggedIn().catch(()=>{
-      wx.showToast({ title:'请授权头像昵称以加入房间', icon:'none' })
-    })
+  data: { rooms: [], me: null },
+  onShow() { this.setData({ rooms: store.listRooms(), me: user.getCurrentUser() }) },
+  onLoad(){ this.setData({ me: user.getCurrentUser() }) },
+  login(){
+    user.ensureLoggedIn()
+      .then(u => { this.setData({ me: u }); wx.showToast({ title:'已登录', icon:'success' }) })
+      .catch(()=>{ wx.showToast({ title:'授权失败或取消', icon:'none' }) })
   },
   formatTime(ts) {
     const d = new Date(ts)
@@ -31,7 +31,7 @@ Page({
   },
   joinRoom(){
     const u = user.getCurrentUser()
-    if(!u){ wx.showToast({ title:'请先登录授权', icon:'none' }); return }
+    if(!u){ wx.showToast({ title:'请先点击上方“登录授权”按钮', icon:'none' }); return }
     wx.showModal({ title:'加入房间', editable:true, placeholderText:'输入房间ID', success:(res)=>{
       if(res.confirm && res.content){
         const r = store.addPlayerToRoom(res.content, u)
