@@ -1,0 +1,34 @@
+<view class="container">
+  <view class="title">{{room.name}}</view>
+  <view class="block">
+    <view class="label">规则：</view>
+    <view class="value">{{ruleName || '未关联'}}</view>
+    <button size="mini" bindtap="chooseRule">关联规则</button>
+  </view>
+
+  <view class="block">
+    <view class="label">玩家：</view>
+    <view class="players">
+      <block wx:for="{{room.players}}" wx:key="name">
+        <view class="player">{{item}}</view>
+      </block>
+      <button size="mini" bindtap="addPlayer">添加玩家</button>
+    </view>
+  </view>
+
+  <view class="actions">
+    <button type="primary" bindtap="addManualRound">手动记分</button>
+    <button bindtap="aiRound">AI 记分（拍照上传）</button>
+  </view>
+
+  <view class="list">
+    <view class="subtitle">对局记录</view>
+    <block wx:for="{{room.rounds}}" wx:key="id">
+      <view class="item">
+        <view>第{{index+1}}局：{{item.desc || '—'}} 分数：{{item.score}}</view>
+        <view class="sub">{{formatTime(item.ts)}}</view>
+      </view>
+    </block>
+    <view wx:if="{{room.rounds.length===0}}" class="empty">暂无记录</view>
+  </view>
+</view>

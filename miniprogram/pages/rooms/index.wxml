@@ -1,0 +1,16 @@
+<view class="container">
+  <view class="title">线下麻将房间</view>
+  <view class="actions">
+    <button type="primary" bindtap="createRoom">新建房间</button>
+    <button bindtap="toRules">规则管理</button>
+  </view>
+  <view class="list">
+    <block wx:for="{{rooms}}" wx:key="id">
+      <view class="item" bindtap="openRoom" data-id="{{item.id}}">
+        <view class="name">{{item.name}}</view>
+        <view class="sub">创建于：{{formatTime(item.createdAt)}}</view>
+      </view>
+    </block>
+    <view wx:if="{{rooms.length===0}}" class="empty">暂无房间</view>
+  </view>
+</view>

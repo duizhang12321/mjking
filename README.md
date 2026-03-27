@@ -1,6 +1,9 @@
 # AI 图片评分微信小程序
 
-一个支持“上传图片并由 AI 自动计算分数”的微信小程序基础工程。当前版本包含本地模拟评分逻辑，便于先跑通端到端流程；后续可按需接入后端或云函数实现真实 AI 评分。
+一个面向线下麻将辅助的微信小程序基础工程。支持：
+- 开房间并记录对局积分（手动或 AI 记分）
+- 关联自定义/预置规则（骨架，后续补充细则）
+- 通过上传图片调用 AI 服务自动记分（占位：火山引擎 API）
 
 ## 目录结构
 
@@ -13,11 +16,10 @@ miniprogram/
   utils/
     api.js                    // 评分 API 封装（模拟/直连后端二选一）
   pages/
-    index/
-      index.json
-      index.wxml
-      index.js
-      index.wxss
+    rooms/                    // 房间列表页
+    room/                     // 房间详情页（手动/AI 记分）
+    rules/                    // 规则管理页（骨架）
+    index/                    // 原演示页（保留）
 docs/
   requirements.md             // 需求澄清文档模板（待你补充）
 ```
@@ -33,19 +35,19 @@ docs/
 2. AppID 可先用 `touristappid` 体验；实际发布时请替换为你的 AppID。
 3. 进入 `pages/index`，点击“选择图片”，再点击“计算分数”，即可看到模拟评分结果。
 
-## 当前评分实现（模拟）
+## AI 记分接入
 
-- 初始阶段为演示使用，本地读取图片大小并生成稳定的“伪评分”。
-- 真实接入后可切换为直连后端：`utils/api.js` 的 `uploadAndScore`，页面调用改为 `api.uploadAndScore(imagePath)`。
+- 封装在 `miniprogram/utils/ai.js:1`：按优先级调用
+  - 火山引擎：读取 `miniprogram/config.js` 的 `volc.endpoint` 与 `headers`，使用 `wx.uploadFile`
+  - 自建后端：读取 `baseUrl`，走 `utils/api.js:1` 的 `uploadAndScore`
+  - 无配置：回退到本地模拟 `scoreImage`
+- 配置：复制 `miniprogram/config.sample.js:1` 为 `miniprogram/config.js` 并填写真实参数（切勿提交密钥）。
 
-## 接入 AI 的两种常见方案
+## 页面与流程
 
-- 直连服务端：
-  - 页面用 `wx.uploadFile` 上传图片到你的服务端，服务端调用 AI 工具返回 `{ score: number, detail?: string }`。
-  - 在 `utils/api.js` 配置 `BASE_URL` 并使用 `uploadAndScore`。
-- 云开发云函数：
-  - 在云函数中完成图片处理与 AI 调用，页面用 `wx.cloud.callFunction` 传递临时文件。
-  - 需初始化云开发、创建函数与部署（后续按需求补充）。
+- 房间列表页：`miniprogram/pages/rooms/index.*` 新建/进入房间、跳转规则管理
+- 房间详情页：`miniprogram/pages/room/index.*` 手动记分或拍照 AI 记分
+- 规则管理页：`miniprogram/pages/rules/index.*` 新建规则（骨架），支持关联到房间
 
 ## 接口约定建议
 
@@ -54,15 +56,14 @@ docs/
 
 ## 后续工作清单（示例）
 
-- 明确评分规则与量表定义（需求澄清文档）。
-- 选择 AI 工具与供应商，确定接入方式与成本。
-- 整理接口协议、错误码与重试策略。
-- 隐私合规与数据处理（本地压缩、敏感信息处理等）。
-- UI 细化与体验优化（加载态、异常提示、结果维度展示）。
+- 梳理并落地麻将规则细则与分值表；完善规则绑定与验证
+- 对接火山引擎真实接口（签名、鉴权、响应结构映射）
+- 完善数据模型（玩家、局次、结算与账本）与导出能力
+- 错误处理与重试、隐私合规与图片生命周期管理
+- UI 细化（维度展示、战绩统计）与埋点监控
 
 ## 交互与协作方式
 
 - 你在 `docs/requirements.md` 按模板逐项补充与修改需求；我据此分阶段实现并提交修改。
 - 每阶段我会更新待办清单、补充实现细节，并在必要时提出澄清问题。
 - 你可在微信开发者工具里真机/模拟器验证；如有变更，继续在需求澄清文档中记录。
-

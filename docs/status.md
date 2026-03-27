@@ -3,11 +3,12 @@
 更新时间：2026-03-27 00:00:00Z（UTC）
 
 ## 项目状态快照
-- 里程碑：M1（演示版：本地模拟评分与基础 UI）已完成；M2（接入真实 AI）待开始；M3（体验与合规）规划中。
+- 里程碑：M1（演示版 + 房间/规则骨架 + AI 接入占位）进行中；M2（接入火山引擎真实 API）待开始；M3（体验与合规）规划中。
 - 当前实现：
-  - 小程序基础结构已建立（选择图片、重置、计算分数）。
-  - 评分逻辑为本地模拟，真实接入的 `uploadAndScore` 已预留。
-- 入口页面：`miniprogram/pages/index/index.wxml:1`
+  - 房间列表/详情页、规则管理页骨架；支持手动记分与拍照 AI 记分（占位）。
+  - AI 接入封装 `miniprogram/utils/ai.js:1`（火山引擎优先，其次后端，最后回退本地模拟）。
+  - 配置模板 `miniprogram/config.sample.js:1`，避免提交敏感信息。
+- 入口页面：`miniprogram/pages/rooms/index.wxml:1`
 - API 封装：`miniprogram/utils/api.js:1`（默认 `scoreImage` 使用本地模拟；直连后端用 `uploadAndScore` 并配置 `BASE_URL`）。
 - 文档：`README.md:1`（项目指南）、`docs/requirements.md:1`（需求澄清模板）。
 
@@ -16,6 +17,10 @@
   - 初始化小程序目录与首页功能：
     - `project.config.json:1`、`miniprogram/app.*`、`miniprogram/pages/index/index.*`、`miniprogram/utils/api.js:1`
   - 新增文档：`README.md:1`、`docs/requirements.md:1`
+  - 新增房间/规则页面与导航；AI 接入封装与配置模板；存储工具：
+    - `miniprogram/pages/rooms/index.*`、`miniprogram/pages/room/index.*`、`miniprogram/pages/rules/index.*`
+    - `miniprogram/utils/ai.js:1`、`miniprogram/config.sample.js:1`、`miniprogram/utils/storage.js:1`
+  - 更新 `miniprogram/app.json:1` 页面顺序，将房间列表设为入口；更新 `README.md:1` 页面说明与接入方式。
 
 ## 待决事项（需要你在需求澄清文档补充）
 - 选择 AI 接入方式：直连服务端 或 云函数。
@@ -31,12 +36,12 @@
 ## 交接须知（给后续接手的 Agent）
 - 开发者工具：导入当前目录，`AppID` 可先用 `touristappid`。
 - 关键文件：
-  - 页面入口：`miniprogram/pages/index/index.js:1`、`miniprogram/pages/index/index.wxml:1`
-  - API 封装：`miniprogram/utils/api.js:1`（切换到真实后端时，改用 `uploadAndScore` 并设置 `BASE_URL`）。
-- 验证流程：选择图片 -> 计算分数（模拟） -> 查看结果与错误信息。
+  - 页面入口：`miniprogram/pages/rooms/index.wxml:1`、房间详情 `miniprogram/pages/room/index.js:1`
+  - AI 封装：`miniprogram/utils/ai.js:1` 与配置 `miniprogram/config.sample.js:1`
+  - API 封装：`miniprogram/utils/api.js:1`（后端直连时使用）。
+- 验证流程：新建房间 -> 添加玩家 -> 手动或拍照 AI 记分 -> 查看记录。
 - 需求来源：`docs/requirements.md:1` 为唯一事实来源；以该文档为准推进实现与验收。
 
 ## 更新机制
 - 我将于每次实现/决策变更后更新本文件的“项目状态快照”和“最近重要变更”。
 - 当需求澄清文档更新时，同步在此处记录待决事项的变更与下一步计划调整。
-

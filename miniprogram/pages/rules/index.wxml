@@ -1,0 +1,15 @@
+<view class="container">
+  <view class="title">自定义/预置规则</view>
+  <view class="actions">
+    <button type="primary" bindtap="createRule">新建规则</button>
+  </view>
+  <view class="list">
+    <block wx:for="{{rules}}" wx:key="id">
+      <view class="item" bindtap="selectRule" data-id="{{item.id}}">
+        <view class="name">{{item.name}}</view>
+        <view class="sub">{{item.desc || '—'}}</view>
+      </view>
+    </block>
+    <view wx:if="{{rules.length===0}}" class="empty">暂无规则</view>
+  </view>
+</view>
