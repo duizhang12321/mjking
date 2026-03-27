@@ -1,4 +1,5 @@
-const BASE_URL = ''
+let cfg = {}
+try { cfg = require('../config') } catch (e) { try { cfg = require('../config.sample') } catch (_) {} }
 
 function mockScore(tempFilePath){
   return new Promise((resolve)=>{
@@ -9,8 +10,9 @@ function mockScore(tempFilePath){
 
 function uploadAndScore(tempFilePath){
   return new Promise((resolve, reject)=>{
-    if (!BASE_URL) { reject(new Error('未配置 BASE_URL')); return }
-    wx.uploadFile({ url: BASE_URL + '/api/score', filePath: tempFilePath, name: 'file', success:(res)=>{ try { const data = JSON.parse(res.data); if (typeof data.score === 'number') resolve(data.score); else reject(new Error('无有效评分字段')) } catch(e){ reject(new Error('返回解析失败')) } }, fail:(err)=>{ reject(new Error(err.errMsg || '网络错误')) } })
+    const base = cfg && cfg.baseUrl ? cfg.baseUrl : ''
+    if (!base) { reject(new Error('未配置 baseUrl')); return }
+    wx.uploadFile({ url: base + '/api/ai/score', filePath: tempFilePath, name: 'file', success:(res)=>{ try { const data = JSON.parse(res.data); if (typeof data.score === 'number') resolve(data.score); else reject(new Error('无有效评分字段')) } catch(e){ reject(new Error('返回解析失败')) } }, fail:(err)=>{ reject(new Error(err.errMsg || '网络错误')) } })
   })
 }
 
