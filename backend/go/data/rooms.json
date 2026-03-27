@@ -1,0 +1,25 @@
+[
+  {
+    "ID": "r-20260327155421:n",
+    "Name": "测试房间",
+    "CreatedAt": 1774598061483,
+    "OwnerUid": "u1",
+    "Players": [
+      {
+        "UID": "u1",
+        "Name": "房主",
+        "Avatar": ""
+      }
+    ],
+    "RuleId": null,
+    "Rounds": [
+      {
+        "ID": 1,
+        "TS": 1,
+        "Score": 12,
+        "Desc": "手动",
+        "UserUID": "u1"
+      }
+    ]
+  }
+]
