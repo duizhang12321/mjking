@@ -9,5 +9,5 @@
 - CORS：已开启（允许跨域 GET/POST/PUT/DELETE/OPTIONS）
 
 本地联调脚本：
-- 使用仓库根目录的 `scripts/dev_local.sh` 自动启动后端并更新前端配置。
-- 运行后在微信开发者工具导入 `frontend/weapp`，即可联调。
+- 使用仓库根目录的 `scripts/dev_local.sh` 或 `scripts/dev_restart.sh` 启动/重启后端。
+- 日志与 PID 位于 `./tmp` 目录，日志文件名包含时间戳。

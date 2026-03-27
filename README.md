@@ -24,11 +24,8 @@
 - docs/requirements.md、docs/status.md
 
 本地联调（脚本）：
-- 脚本：scripts/dev_local.sh（启动后端并写入前端 config.js）
+- 脚本：scripts/dev_local.sh（仅启动后端）/ scripts/dev_restart.sh（重启后端）
 - 用法：
   - chmod +x scripts/dev_local.sh && ./scripts/dev_local.sh（可选参数：PORT DATA_DIR）
   - 环境变量（可选）：VOLC_ENDPOINT、VOLC_AUTH、LLM_ENDPOINT、LLM_AUTH
-- 行为：
-  - 在后台启动后端（日志：dev_backend.log，PID：dev_backend.pid）
-  - 等待 http://127.0.0.1:<PORT> 就绪，写入前端 frontend/weapp/miniprogram/config.js，将 baseUrl 指向后端
-  - 打开微信开发者工具并导入 frontend/weapp 进行联调
+  - 行为：后台启动/重启后端，日志与 PID 均位于 `./tmp` 目录（日志文件名包含时间戳），并等待 `http://127.0.0.1:<PORT>` 就绪。

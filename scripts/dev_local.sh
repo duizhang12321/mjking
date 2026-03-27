@@ -16,7 +16,7 @@ echo "[dev] 启动后端: PORT=$PORT DATA_DIR=$DATA_DIR"
 mkdir -p "$DATA_DIR"
 
 # 启动后端（后台运行，输出到 dev_backend.log）
-LOG_DIR="logs"
+LOG_DIR="tmp"
 TIMESTAMP="$(date +%Y%m%d-%H%M%S)"
 LOG_FILE="$LOG_DIR/backend-$TIMESTAMP.log"
 PID_FILE="dev_backend.pid"

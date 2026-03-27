@@ -10,7 +10,7 @@ set -euo pipefail
 PORT=${1:-${PORT:-8080}}
 DATA_DIR=${2:-${DATA_DIR:-./data}}
 BACKEND_DIR="backend/go"
-LOG_DIR="logs"
+LOG_DIR="tmp"
 TIMESTAMP="$(date +%Y%m%d-%H%M%S)"
 LOG_FILE="$LOG_DIR/backend-$TIMESTAMP.log"
 PID_FILE="dev_backend.pid"
