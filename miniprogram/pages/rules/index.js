@@ -5,7 +5,7 @@ Page({
   data: { rules: [], pick: false },
   onLoad(q){ this.setData({ pick: !!q && q.pick }) },
   onShow(){
-    const preset = [{ id: tmpl.presetChuanMaXueZhan.id, name: tmpl.presetChuanMaXueZhan.name, desc: tmpl.presetChuanMaXueZhan.desc, version: tmpl.presetChuanMaXueZhan.version, schema: tmpl.schema, rule: tmpl.presetChuanMaXueZhan.rule, templateText: tmpl.renderTemplateText(tmpl.presetChuanMaXueZhan.rule) }]
+    const preset = [{ id: tmpl.presetChuanMaXueZhan.id, name: tmpl.presetChuanMaXueZhan.name, desc: tmpl.presetChuanMaXueZhan.desc, version: tmpl.presetChuanMaXueZhan.version, schema: tmpl.schema, rule: tmpl.presetChuanMaXueZhan.rule, templateMarkdown: tmpl.renderTemplateMarkdown(tmpl.presetChuanMaXueZhan.rule) }]
     const rules = store.ensurePresetRules(preset)
     this.setData({ rules })
   },
