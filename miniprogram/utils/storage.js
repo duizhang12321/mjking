@@ -74,8 +74,14 @@ function updateRule(rule) {
 }
 
 function deleteRule(id) {
-  const rules = listRules().filter(r => r.id !== id)
-  set(KEYS.rules, rules)
+  const rules = listRules()
+  const target = rules.find(r => r.id === id)
+  if (target && target.preset) {
+    // 预置规则不可删除
+    return
+  }
+  const next = rules.filter(r => r.id !== id)
+  set(KEYS.rules, next)
 }
 
 function ensurePresetRules(presetList) {

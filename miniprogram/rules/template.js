@@ -129,6 +129,7 @@ const presetChuanMaXueZhan = {
   name: '川麻·血战到底（模版）',
   desc: '常见川麻血战到底基线规则，可编辑微调',
   version: 'v1',
+  preset: true,
   schema: schema,
   rule: {
     meta: { name: '川麻·血战到底', variant: '川麻·血战到底', version: 'v1', description: '四人，无风无箭无花；连庄；抓鸟2，每中一鸟加1；查花猪/查大叫；示例番型含清一色、对对胡等' },

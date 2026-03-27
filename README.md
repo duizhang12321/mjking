@@ -70,7 +70,7 @@ docs/
 - 番型：`scoring.baseHands/melds/extras`（示例：平胡、自摸、对对胡、清一色、明杠、暗杠、绝张等）
 
 模版渲染：`miniprogram/rules/template.js:1` 的 `renderTemplateText(rule)` 将结构化规则渲染为人类可读文本，供 AI 直接消费。
-预置“川麻·血战到底”已内置：`miniprogram/rules/template.js:1`。
+预置“川麻·血战到底”已内置且标记为“预置”，不可删除：`miniprogram/rules/template.js:1`、`miniprogram/pages/rules/index.*`。
 自定义规则：在“新建规则”页输入名称与自然语言描述，调用 LLM 渲染为 Markdown 模版；保存前进行规范校验（必含“桌面/庄家/结算/抓鸟/违例检查/番型”等段落）。目前编辑功能暂时移除，仅支持新建与删除。
 
 ## 开发测试：重置数据
