@@ -6,7 +6,7 @@ Page({
   data: { id: '', room: { name: '', players: [], rounds: [], ownerUid: '' }, ruleName: '', isOwner: false, me: null },
   onLoad(q) {
     const id = q && q.id
-    if (!id) {
+    if (!id || id === 'undefined') {
       wx.showToast({ title: '房间ID缺失', icon: 'none' })
       wx.navigateBack({})
       return
