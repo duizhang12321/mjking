@@ -1,0 +1,8 @@
+/* 全局样式 */
+page {
+  background-color: #f7f8fa;
+}
+
+.container {
+  padding: 16px;
+}
