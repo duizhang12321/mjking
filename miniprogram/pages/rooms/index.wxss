@@ -8,5 +8,5 @@
 .block { background:#fff; border:1px solid #e5e6eb; border-radius:8px; padding:12px; }
 .label { color:#86909c; margin-bottom:6px; }
 .user { display:flex; align-items:center; gap:8px; }
-.avatar { width:28px; height:28px; border-radius:50%; }
+.avatar { width:28px; height:28px; border-radius:50%; overflow: hidden; }
 .nick { font-size:14px; }

@@ -4,7 +4,8 @@
     <view class="label">用户</view>
     <view wx:if="{{me}}" class="user">
       <image wx:if="{{me.avatarUrl}}" class="avatar" src="{{me.avatarUrl}}"></image>
-      <text class="nick">{{me.nickName}}</text>
+      <open-data wx:else class="avatar" type="userAvatarUrl"></open-data>
+      <text class="nick">{{me.nickName || ''}}</text>
       <button size="mini" bindtap="resetAll">清空数据</button>
     </view>
     <button wx:else type="primary" size="mini" bindtap="login">登录授权</button>
