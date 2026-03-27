@@ -32,6 +32,4 @@ function updateRule(rule){ return request('PUT', `/api/rules/${rule.id}`, rule).
 function deleteRule(id){ const rules = get(KEYS.rules); const target = rules.find(r=>r.id===id); if(target && target.preset) return; return request('DELETE', `/api/rules/${id}`).catch(()=>{ const next = rules.filter(r=> r.id!==id); set(KEYS.rules, next) }) }
 function ensurePresetRules(presetList){ if (cfg && cfg.baseUrl) { return listRules() } const rules = get(KEYS.rules); if (rules.length===0 && Array.isArray(presetList) && presetList.length){ set(KEYS.rules, presetList); return presetList } return rules }
 
-function clearAll(){ try { wx.clearStorageSync() } catch(e){} }
-
-module.exports = { KEYS, listRooms, createRoom, getRoom, saveRoom, addPlayerToRoom, listRules, createRule, updateRule, deleteRule, setSelectedRule, getSelectedRule, ensurePresetRules, clearAll }
+module.exports = { KEYS, listRooms, createRoom, getRoom, saveRoom, addPlayerToRoom, listRules, createRule, updateRule, deleteRule, setSelectedRule, getSelectedRule, ensurePresetRules }

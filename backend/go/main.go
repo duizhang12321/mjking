@@ -243,6 +243,7 @@ func main(){ rand.Seed(time.Now().UnixNano())
   mux.HandleFunc("/api/rules/", handleRule)
   mux.HandleFunc("/api/ai/score", handleAIScore)
   mux.HandleFunc("/api/ai/rule-markdown", handleAIRuleMarkdown)
+  mux.HandleFunc("/api/admin/reset", handleAdminReset)
   // scoring engine: execute with structured input
   mux.HandleFunc("/api/score/execute", handleScoreExecute)
   // rule creation multi-turn session (LLM-guided)
@@ -291,4 +292,18 @@ func handleRuleSessionMessage(w http.ResponseWriter, r *http.Request){
   if llmEndpoint == "" { w.WriteHeader(http.StatusNotImplemented); jsonResp(w, map[string]string{"message":"LLM_ENDPOINT not configured"}); return }
   // TODO: maintain conversation state; for now just proxy single turn to /api/ai/rule-markdown
   handleAIRuleMarkdown(w, r)
+}
+// 管理端：清空数据（保留预置规则）
+func handleAdminReset(w http.ResponseWriter, r *http.Request){
+  if r.Method != http.MethodPost { w.WriteHeader(http.StatusMethodNotAllowed); return }
+  mu.Lock()
+  // 清空房间
+  rooms = map[string]*Room{}
+  // 保留预置规则，移除非预置
+  newRules := map[string]*Rule{}
+  for id, ru := range rules { if ru.Preset { newRules[id] = ru } }
+  rules = newRules
+  mu.Unlock()
+  saveRooms(); saveRules()
+  jsonResp(w, map[string]any{"ok": true, "roomsCleared": true, "rulesPreserved": len(newRules)})
 }

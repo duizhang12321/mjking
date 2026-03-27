@@ -33,3 +33,5 @@ Room: `{ id, name, createdAt, ownerUid, players:[{uid,name,avatar}], ruleId?, ro
   - `LLM_ENDPOINT`、`LLM_AUTH`（规则渲染代理地址与鉴权）
 - CORS：默认允许跨域访问；如需收紧可在 `main.go` 中调整 `withCORS`。
 - 预置规则：由前端提供并可写入后端；服务端需保证 `preset=true` 的规则不可删除。
+- 管理 Admin
+  - POST /api/admin/reset → 200: `{ ok:true, roomsCleared:true, rulesPreserved:number }`（清空房间并保留预置规则）
