@@ -1,5 +1,5 @@
 # Dev backend runtime artifacts
-dev_backend.log
+logs/
 dev_backend.pid
 
 # Local runtime data (do not commit)

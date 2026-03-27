@@ -16,12 +16,15 @@ echo "[dev] 启动后端: PORT=$PORT DATA_DIR=$DATA_DIR"
 mkdir -p "$DATA_DIR"
 
 # 启动后端（后台运行，输出到 dev_backend.log）
-LOG_FILE="dev_backend.log"
+LOG_DIR="logs"
+TIMESTAMP="$(date +%Y%m%d-%H%M%S)"
+LOG_FILE="$LOG_DIR/backend-$TIMESTAMP.log"
 PID_FILE="dev_backend.pid"
 if [ -f "$PID_FILE" ] && kill -0 "$(cat "$PID_FILE" 2>/dev/null)" 2>/dev/null; then
   echo "[dev] 后端已在运行 (pid $(cat "$PID_FILE")); 跳过启动"
 else
   # 在子目录启动并在主目录记录 PID
+  mkdir -p "$LOG_DIR"
   pushd "$BACKEND_DIR" >/dev/null
   nohup env PORT="$PORT" DATA_DIR="$(pwd)/../../$DATA_DIR" VOLC_ENDPOINT="${VOLC_ENDPOINT:-}" VOLC_AUTH="${VOLC_AUTH:-}" LLM_ENDPOINT="${LLM_ENDPOINT:-}" LLM_AUTH="${LLM_AUTH:-}" go run . > "../../$LOG_FILE" 2>&1 &
   PID=$!
