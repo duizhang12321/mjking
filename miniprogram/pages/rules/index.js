@@ -9,7 +9,7 @@ Page({
     const rules = store.ensurePresetRules(preset)
     this.setData({ rules })
   },
-  createRule(){ wx.navigateTo({ url: '/pages/rules/edit' }) },
+  createRule(){ wx.navigateTo({ url: '/pages/rules/create' }) },
   selectRule(e){
     if(!this.data.pick) return
     const id = e.currentTarget.dataset.id
@@ -18,6 +18,5 @@ Page({
     wx.navigateBack()
   },
   openDetail(e){ const id = e.currentTarget.dataset.id; wx.navigateTo({ url: `/pages/rules/detail?id=${id}` }) },
-  editRule(e){ const id = e.currentTarget.dataset.id; wx.navigateTo({ url: `/pages/rules/edit?id=${id}` }) },
   deleteRule(e){ const id = e.currentTarget.dataset.id; wx.showModal({ title:'删除规则', content:'删除后不可恢复，确认删除？', success:(res)=>{ if(res.confirm){ store.deleteRule(id); this.setData({ rules: store.listRules() }) } } }) }
 })

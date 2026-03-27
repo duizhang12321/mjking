@@ -1,15 +1,14 @@
 <view class="container">
-  <view class="title">{{id ? '编辑规则' : '新建规则'}}</view>
+  <view class="title">新建规则</view>
   <view class="form">
     <view class="row"><text class="label">规则名称</text><input class="input" value="{{name}}" bindinput="onName" placeholder="例如：川麻·血战到底（自定义）"/></view>
     <view class="row"><text class="label">自然语言描述</text><textarea class="textarea" value="{{nl}}" bindinput="onNL" placeholder="例如：四人血战到底，手牌13，抓2鸟，每中一鸟加1，三家付，连庄，查花猪与查大叫"/></view>
     <view class="ops">
-      <button size="mini" type="default" bindtap="render">渲染为模板</button>
-      <button size="mini" type="primary" bindtap="save">保存</button>
+      <button size="mini" type="primary" bindtap="create">创建（AI 渲染）</button>
     </view>
   </view>
   <view wx:if="{{preview}}" class="preview">
-    <view class="subtitle">模板预览（AI 使用依据）</view>
-    <text selectable="true">{{preview}}</text>
+    <view class="subtitle">模板预览（Markdown）</view>
+    <rich-text nodes="{{html}}"></rich-text>
   </view>
 </view>

@@ -5,7 +5,7 @@
     "pages/room/index",
     "pages/rules/index",
     "pages/rules/detail",
-    "pages/rules/edit",
+    "pages/rules/create",
     "pages/index/index"
   ],
   "window": {

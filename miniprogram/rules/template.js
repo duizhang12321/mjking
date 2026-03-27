@@ -55,7 +55,7 @@ const schema = {
   }
 }
 
-function renderTemplateText(rule) {
+function renderTemplateMarkdown(rule) {
   const r = { ...schema, ...rule }
   const m = r.meta || {}
   const t = r.table || {}
@@ -65,18 +65,46 @@ function renderTemplateText(rule) {
   const b = r.birds || {}
   const p = r.penalties || {}
   const sc = r.scoring || {}
-  const list = arr => (arr || []).map(i => `${i.key}：${i.fan}番`).join('；') || '无'
+  const list = arr => (arr || []).map(i => `- ${i.key}：${i.fan}番`).join('\n') || '- 无'
   return [
-    `规则名称：${m.name}（${m.variant}；版本：${m.version}）`,
-    `说明：${m.description || '无'}`,
-    `桌面：${t.players}人；手牌数：${t.handSize}；牌组：${tiles.totalTiles || ''}张（${tiles.suits.join('、')}${tiles.includeWinds?'含风':''}${tiles.includeDragons?'含箭':''}${tiles.includeFlowers?'含花':''}）`,
-    `庄家：${d.continuousDealer?'连庄':''}；庄家自摸加底：${d.dealerBonus?.selfDrawAddBase || 0}；庄家胡牌加底：${d.dealerBonus?.winAddBase || 0}`,
-    `结算：付费模式=${s.payMode}；底分=${s.basePoint}；封顶=${s.cap? s.cap+'番':'不限'}`,
-    `抓鸟：${b.enabled? '开启' : '关闭'}；数量=${b.count || 0}；每中一鸟加底=${b.hitBonus || 0}`,
-    `查错：查大叫=${p.checkNoDeclare? '是':'否'}；查花猪=${p.checkWrongSuit? '是':'否'}`,
-    `基础番型：${list(sc.baseHands)}`,
-    `杠类加番：${list(sc.melds)}`,
-    `额外加成：${list(sc.extras)}`
+    `# ${m.name}`,
+    ``,
+    `> 变体：${m.variant} · 版本：${m.version}`,
+    ``,
+    `## 说明`,
+    `${m.description || '无'}`,
+    ``,
+    `## 桌面`,
+    `- 人数：${t.players}`,
+    `- 手牌数：${t.handSize}`,
+    `- 牌组：${tiles.totalTiles || ''}张（${tiles.suits.join('、')}${tiles.includeWinds?'·含风':''}${tiles.includeDragons?'·含箭':''}${tiles.includeFlowers?'·含花':''}）`,
+    ``,
+    `## 庄家`,
+    `- 连庄：${d.continuousDealer ? '是' : '否'}`,
+    `- 自摸加底：${d.dealerBonus?.selfDrawAddBase || 0}`,
+    `- 胡牌加底：${d.dealerBonus?.winAddBase || 0}`,
+    ``,
+    `## 结算`,
+    `- 付费模式：${s.payMode}`,
+    `- 底分：${s.basePoint}`,
+    `- 封顶：${s.cap ? s.cap+'番' : '不限'}`,
+    ``,
+    `## 抓鸟`,
+    `- 开启：${b.enabled ? '是' : '否'}`,
+    `- 数量：${b.count || 0}`,
+    `- 每中一鸟加底：${b.hitBonus || 0}`,
+    ``,
+    `## 违例检查`,
+    `- 查大叫：${p.checkNoDeclare ? '是' : '否'}`,
+    `- 查花猪：${p.checkWrongSuit ? '是' : '否'}`,
+    ``,
+    `## 番型`,
+    `### 基础番型`,
+    `${list(sc.baseHands)}`,
+    `### 杠类加番`,
+    `${list(sc.melds)}`,
+    `### 额外加成`,
+    `${list(sc.extras)}`
   ].join('\n')
 }
 
@@ -114,14 +142,30 @@ const presetChuanMaXueZhan = {
       melds: [ { key:'明杠', fan:1 }, { key:'暗杠', fan:2 } ],
       extras: [ { key:'绝张', fan:1 } ]
     }
-  }
+  },
+  templateMarkdown: ''
+}
+
+function validateRuleObject(r) {
+  const ok = r && r.table && r.table.players && r.table.handSize && r.scoring && Array.isArray(r.scoring.baseHands)
+  return !!ok
+}
+
+function validateMarkdown(md) {
+  const required = ['## 桌面','## 庄家','## 结算','## 抓鸟','## 违例检查','## 番型']
+  return required.every(k => md.includes(k))
 }
 
 function buildRuleObject(metaName, nlText) {
   const r = parseNaturalLanguage(nlText)
   r.meta.name = metaName || r.meta.name
-  return { id: 'rule-'+Date.now(), name: metaName || r.meta.name, desc: '', version: r.meta.version, schema, rule: r, templateText: renderTemplateText(r) }
+  if (!validateRuleObject(r)) throw new Error('规则不完整：缺少关键字段')
+  const md = renderTemplateMarkdown(r)
+  if (!validateMarkdown(md)) throw new Error('Markdown 模版不符合规范')
+  return { id: 'rule-'+Date.now(), name: metaName || r.meta.name, desc: '', version: r.meta.version, schema, rule: r, templateMarkdown: md }
 }
 
-module.exports = { schema, renderTemplateText, parseNaturalLanguage, presetChuanMaXueZhan, buildRuleObject }
+// 初始化预置的 Markdown
+presetChuanMaXueZhan.templateMarkdown = renderTemplateMarkdown(presetChuanMaXueZhan.rule)
 
+module.exports = { schema, renderTemplateMarkdown, parseNaturalLanguage, presetChuanMaXueZhan, buildRuleObject, validateRuleObject, validateMarkdown }

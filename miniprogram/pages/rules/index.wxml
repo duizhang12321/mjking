@@ -10,7 +10,7 @@
         <view class="sub">{{item.desc || '—'}}</view>
         <view class="ops">
           <button size="mini" data-id="{{item.id}}" bindtap="openDetail">查看</button>
-          <button size="mini" data-id="{{item.id}}" bindtap="editRule">编辑</button>
+          <!-- 编辑功能暂时移除，仅支持新建与删除 -->
           <button size="mini" type="warn" data-id="{{item.id}}" bindtap="deleteRule">删除</button>
           <button wx:if="{{pick}}" size="mini" type="primary" data-id="{{item.id}}" bindtap="selectRule">选择</button>
         </view>
