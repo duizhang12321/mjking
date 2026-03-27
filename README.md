@@ -54,6 +54,7 @@ docs/
 - 登录授权页：`miniprogram/pages/auth/index.*` 首次进入必须授权，成功后进入房间列表
 - 房间列表页：`miniprogram/pages/rooms/index.*` 新建/进入房间、跳转规则管理
 - 房间详情页：`miniprogram/pages/room/index.*` 手动记分或拍照 AI 记分
+- 分享与加入：房主在房间详情页点击“分享房间”，其他用户通过分享卡片进入该房间页面；如未登录会先跳转授权页，授权后自动加入房间。
 - 规则管理页：`miniprogram/pages/rules/index.*` 新建规则（骨架），支持关联到房间
 - 用户登录：首次进入会请求微信头像/昵称授权（`utils/user.js:1`），用于标识房主与玩家
 - 登录授权需“用户触发”：在登录页点击“授权并进入”按钮弹出授权框；授权后进入应用。

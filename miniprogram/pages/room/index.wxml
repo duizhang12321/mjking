@@ -19,6 +19,7 @@
   <view class="actions">
     <button type="primary" bindtap="addManualRound">手动记分</button>
     <button bindtap="aiRound">AI 记分（拍照上传）</button>
+    <button open-type="share">分享房间</button>
   </view>
 
   <view class="list">

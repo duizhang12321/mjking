@@ -6,11 +6,23 @@ Page({
   data: { id: '', room: { name: '', players: [], rounds: [], ownerUid: '' }, ruleName: '', isOwner: false, me: null },
   onLoad(q) {
     if (q && q.id) {
-      const room = store.getRoom(q.id) || { name: '', players: [], rounds: [] }
+      const room = store.getRoom(q.id) || { name: '', players: [], rounds: [], ownerUid: '' }
       const ruleName = room.ruleId ? (store.listRules().find(r=>r.id===room.ruleId)?.name || '') : ''
       const me = user.getCurrentUser()
+      if (!me) {
+        // 未登录则跳转授权页，并在登录后重定向回房间
+        const redirect = encodeURIComponent(`/pages/room/index?id=${q.id}`)
+        wx.redirectTo({ url: `/pages/auth/index?redirect=${redirect}` })
+        return
+      }
       const isOwner = !!(me && room.ownerUid && me.uid === room.ownerUid)
-      this.setData({ id: q.id, room, ruleName, me, isOwner })
+      // 自动加入房间（若不在玩家列表）
+      const exists = (room.players || []).some(p => p.uid === me.uid)
+      if (!exists) {
+        store.addPlayerToRoom(q.id, me)
+      }
+      const updated = store.getRoom(q.id)
+      this.setData({ id: q.id, room: updated, ruleName, me, isOwner })
     }
   },
   onShow(){
@@ -68,5 +80,13 @@ Page({
         })
         .catch(err=>{ wx.hideLoading(); wx.showToast({ title: err.message || '记分失败', icon:'none' }) })
     } })
+  }
+  ,
+  onShareAppMessage() {
+    const { id, room } = this.data
+    return {
+      title: `加入房间：${room.name}`,
+      path: `/pages/room/index?id=${id}`
+    }
   }
 })
