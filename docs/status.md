@@ -71,7 +71,15 @@
   - 开发者工具与真机差异：
     - DevTools 可能返回默认昵称“微信用户”与空头像；真机授权可获取真实信息。
     - 已在房间列表页对头像增加 `<open-data type="userAvatarUrl">` 回退显示。
-  - 规则模版与管理：
-    - 模版以 Markdown 存储并渲染查看；必含“桌面/庄家/结算/抓鸟/违例检查/番型”等段落。
-    - 预置“川麻·血战到底”内置并生成 Markdown，标记为“预置”，不可删除。
+- 规则模版与管理：
+  - 模版以 Markdown 存储并渲染查看；必含“桌面/庄家/结算/抓鸟/违例检查/番型”等段落。
+  - 预置“川麻·血战到底”内置并生成 Markdown，标记为“预置”，不可删除。
     - 新建规则：输入名称与自然语言描述，优先调用 LLM 渲染 Markdown，并在不合格时向 LLM反馈缺失分节等问题要求修正（最多重试 2 次）；仍不合格则回退本地解析渲染。当前仅支持新建与删除，编辑暂时移除。
+
+## 架构改造（前后端分离）
+- 前端：小程序 UI、拍照上传、规则选择与展示；当 `config.baseUrl` 存在时，所有数据读写走后端 API。
+- 后端（接口建议与职责）：
+  - 规则接口：`GET/POST/PUT/DELETE /api/rules`（返回 `preset` 与 `templateMarkdown`；删除需拒绝预置）。
+  - 房间接口：`GET/POST /api/rooms`、`GET/PUT /api/rooms/:id`、`POST /api/rooms/:id/join`。
+  - AI接口：`POST /api/ai/score`（代理火山引擎评分）、`POST /api/ai/rule-markdown`（代理 LLM 渲染）。
+- 代码位置：改造后的前端数据层在 `miniprogram/utils/storage.js:1`，自动选择后端或本地回退。

@@ -31,6 +31,21 @@
 ## 四、AI 服务与架构选择
 - 上传图片并计算积分通过调用AI服务实现，目前使用火山引擎的API
 
+## 七、前后端接口（改造后）
+- 前端仅持有最小状态，所有规则/房间数据通过后端接口管理。
+- 规则：
+  - `GET /api/rules` 返回 `{ id, name, preset, templateMarkdown, version }[]`
+  - `POST /api/rules` 接收 `{ name, markdown | prompt }`；若为 `prompt`，后端调用 LLM 生成 Markdown 并返回
+  - `DELETE /api/rules/:id` 删除（预置 `preset=true` 的需拒绝）
+- 房间：
+  - `POST /api/rooms` 创建并设置房主信息 `{ ownerUid, ownerName, ownerAvatar }`
+  - `GET /api/rooms/:id` 返回详情（含玩家与轮次）
+  - `PUT /api/rooms/:id` 保存轮次与规则关联
+  - `POST /api/rooms/:id/join` 根据用户凭证加入房间
+- AI：
+  - `POST /api/ai/score` 上传图片代理火山引擎，返回 `{ score, detail }`
+  - `POST /api/ai/rule-markdown` 渲染规则 Markdown，返回 `{ markdown }`
+
 ## 五、登录与加入
 - 登录：首次进入必须微信头像/昵称授权（本地认证，不依赖后端）
 - 加入：仅支持通过房间分享卡片进入后自动加入；不支持手动添加或输入房间ID加入

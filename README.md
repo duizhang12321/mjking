@@ -98,3 +98,19 @@ docs/
 - 你在 `docs/requirements.md` 按模板逐项补充与修改需求；我据此分阶段实现并提交修改。
 - 每阶段我会更新待办清单、补充实现细节，并在必要时提出澄清问题。
 - 你可在微信开发者工具里真机/模拟器验证；如有变更，继续在需求澄清文档中记录。
+## 前后端架构（改造后模式）
+- 前端职责：页面交互、上传图片、发起规则创建与选择、渲染规则 Markdown 与详情展示。
+- 后端职责（建议接口路径）：
+  - 规则：
+    - `GET /api/rules` 列表（包含 `preset: true/false` 与 `templateMarkdown`）
+    - `POST /api/rules` 新建（名称、Markdown 或由 LLM 渲染返回）
+    - `PUT /api/rules/:id` 更新（暂不在前端启用编辑）
+    - `DELETE /api/rules/:id` 删除（服务端需拒绝 `preset`）
+  - 房间：
+    - `GET /api/rooms` 列表；`POST /api/rooms` 创建（带房主信息）
+    - `GET /api/rooms/:id` 详情；`PUT /api/rooms/:id` 保存（轮次、规则关联）
+    - `POST /api/rooms/:id/join` 加入房间（用户凭证）
+  - AI：
+    - `POST /api/ai/score` 图片记分（代理火山引擎）；返回 `{ score, detail }`
+    - `POST /api/ai/rule-markdown` 规则渲染（代理 LLM）；返回 `{ markdown }`
+- 前端调用：`miniprogram/utils/storage.js:1` 在检测到 `config.baseUrl` 时自动改为请求后端，失败时本地回退（便于开发）。
