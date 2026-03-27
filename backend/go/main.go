@@ -190,6 +190,8 @@ func envOr(k, def string) string { if v := os.Getenv(k); v != "" { return v }; r
 
 func withCORS(next http.Handler) http.Handler { return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){ w.Header().Set("Access-Control-Allow-Origin", "*"); w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization"); w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS"); if r.Method == http.MethodOptions { w.WriteHeader(http.StatusNoContent); return }; next.ServeHTTP(w,r) }) }
 
+func withLogging(next http.Handler) http.Handler { return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){ log.Printf("%s %s from %s", r.Method, r.URL.Path, r.RemoteAddr); next.ServeHTTP(w, r) }) }
+
 func main(){ rand.Seed(time.Now().UnixNano())
   loadState()
   mux := http.NewServeMux()
@@ -206,7 +208,7 @@ func main(){ rand.Seed(time.Now().UnixNano())
   mux.HandleFunc("/api/rules/session/", handleRuleSessionMessage)
   addr := ":" + envOr("PORT", "8080")
   log.Println("backend listening on", addr, "dataDir=", dataDir)
-  log.Fatal(http.ListenAndServe(addr, withCORS(mux)))
+  log.Fatal(http.ListenAndServe(addr, withLogging(withCORS(mux))))
 }
 
 // --- Scoring engine placeholder ---

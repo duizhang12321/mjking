@@ -5,22 +5,41 @@ const user = require('../../utils/user')
 Page({
   data: { id: '', room: { name: '', players: [], rounds: [], ownerUid: '' }, ruleName: '', isOwner: false, me: null },
   onLoad(q) {
-    if (q && q.id) {
-      store.getRoom(q.id).then(room => {
-        room = room || { name: '', players: [], rounds: [], ownerUid: '' }
-        const ruleName = room.ruleId ? (store.listRules().then(rs=>{ const name = (rs.find(r=>r.id===room.ruleId)?.name||''); this.setData({ ruleName: name }) })) && '' : ''
-        const me = user.getCurrentUser()
-        if (!me) {
-          const redirect = encodeURIComponent(`/pages/room/index?id=${q.id}`)
-          wx.redirectTo({ url: `/pages/auth/index?redirect=${redirect}` })
-          return
-        }
-        const isOwner = !!(me && room.ownerUid && me.uid === room.ownerUid)
-        const exists = (room.players || []).some(p => p.uid === me.uid)
-        if (!exists) { store.addPlayerToRoom(q.id, me).then(r => room = r || room) }
-        this.setData({ id: q.id, room, me, isOwner })
-      })
+    const id = q && q.id
+    if (!id) {
+      wx.showToast({ title: '房间ID缺失', icon: 'none' })
+      wx.navigateBack({})
+      return
     }
+    store.getRoom(id).then(room => {
+      if (!room) {
+        wx.showToast({ title: '房间不存在', icon: 'none' })
+        wx.navigateBack({})
+        return
+      }
+      const me = user.getCurrentUser()
+      if (!me) {
+        const redirect = encodeURIComponent(`/pages/room/index?id=${id}`)
+        wx.redirectTo({ url: `/pages/auth/index?redirect=${redirect}` })
+        return
+      }
+      const isOwner = !!(me && room.ownerUid && me.uid === room.ownerUid)
+      const exists = (room.players || []).some(p => p.uid === me.uid)
+      if (!exists) {
+        store.addPlayerToRoom(id, me).then(r => {
+          if (r) room = r
+          this.setData({ id, room, me, isOwner })
+        })
+      } else {
+        this.setData({ id, room, me, isOwner })
+      }
+      if (room.ruleId) {
+        store.listRules().then(rs => {
+          const name = (rs.find(r => r.id === room.ruleId)?.name || '')
+          this.setData({ ruleName: name })
+        })
+      }
+    })
   },
   formatTime(ts) { const d = new Date(ts); return `${d.getFullYear()}-${(d.getMonth()+1).toString().padStart(2,'0')}-${d.getDate().toString().padStart(2,'0')} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}` },
   chooseRule() { if(!this.data.isOwner){ wx.showToast({ title:'仅房主可设置规则', icon:'none' }); return } wx.navigateTo({ url: '/pages/rules/index?pick=1' }) },

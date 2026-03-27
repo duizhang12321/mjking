@@ -16,7 +16,7 @@ function uuid(){ return 'r-' + Math.random().toString(36).slice(2) + Date.now() 
 
 function listRooms(){ return request('GET', '/api/rooms').catch(()=> get(KEYS.rooms)) }
 function createRoom(name, owner){ const payload = { name, ownerUid: owner?.uid || '', ownerName: owner?.nickName || '未命名', ownerAvatar: owner?.avatarUrl || '' }; return request('POST', '/api/rooms', payload).catch(()=>{ const rooms = get(KEYS.rooms); const room = { id: uuid(), name, createdAt: Date.now(), ownerUid: payload.ownerUid, players: [], ruleId: null, rounds: [] }; if(owner){ room.players.push({ uid: owner.uid, name: owner.nickName || '未命名', avatar: owner.avatarUrl || '' }) } rooms.unshift(room); set(KEYS.rooms, rooms); return room }) }
-function getRoom(id){ return request('GET', `/api/rooms/${id}`).catch(()=> (get(KEYS.rooms).find(r=>r.id===id))) }
+function getRoom(id){ if(!id){ return Promise.resolve(null) } return request('GET', `/api/rooms/${id}`).catch(()=> (get(KEYS.rooms).find(r=>r.id===id))) }
 function saveRoom(room){ return request('PUT', `/api/rooms/${room.id}`, room).catch(()=>{ const rooms = get(KEYS.rooms).map(r=> (r.id===room.id ? room : r)); set(KEYS.rooms, rooms) }) }
 function addPlayerToRoom(id, player){ const payload = { uid: player.uid, name: player.nickName || player.name || '未命名', avatar: player.avatarUrl || player.avatar || '' }; return request('POST', `/api/rooms/${id}/join`, payload).catch(()=>{ const room = get(KEYS.rooms).find(r=>r.id===id); if(!room) return null; room.players = room.players || []; const exists = room.players.some(p=>p.uid===payload.uid); if(!exists){ room.players.push(payload); const rooms = get(KEYS.rooms).map(r=> (r.id===id ? room : r)); set(KEYS.rooms, rooms) } return room }) }
 
