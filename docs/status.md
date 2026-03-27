@@ -22,6 +22,9 @@
     - `miniprogram/utils/ai.js:1`、`miniprogram/config.sample.js:1`、`miniprogram/utils/storage.js:1`
   - 更新 `miniprogram/app.json:1` 页面顺序，将房间列表设为入口；更新 `README.md:1` 页面说明与接入方式。
   - 启用 Git post-commit 自动推送钩子：`/.git/hooks/post-commit:1`（每次提交后自动 `git push origin <branch>`）
+  - Git 推送网络受限的替代方案：
+    - 已切换并尝试 SSH 远端；生成推送专用密钥 `~/.ssh/id_ed25519.pub`，请将公钥添加到 GitHub（账户 SSH keys 或仓库 Deploy keys）后再试推送。
+    - 公钥内容：`ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE0Kw/KPlH2Vm4uq0mVWxt2HyR1AiW2mIRN3Rf7VZ14a traecli-mjking`
   - 多用户房间与房主权限：
     - 用户会话：`miniprogram/utils/user.js:1`（微信头像昵称）
     - 房间支持加入/显示房间ID：`miniprogram/pages/rooms/index.*`
