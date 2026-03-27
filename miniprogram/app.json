@@ -1,5 +1,6 @@
 {
   "pages": [
+    "pages/auth/index",
     "pages/rooms/index",
     "pages/room/index",
     "pages/rules/index",

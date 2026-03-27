@@ -31,7 +31,7 @@
     - 房主可关联规则、添加玩家；玩家仅手动或拍照记分：`miniprogram/pages/room/index.*`
     - 轮次记录携带操作者：`userUid`
   - 登录授权体验修正：
-    - 新增房间列表页的“登录授权”按钮（用户触发调用 `wx.getUserProfile`），避免在页面加载时无弹窗的问题。
+    - 新增登录授权页：`miniprogram/pages/auth/index.*`（用户触发 `wx.getUserProfile`，授权后重定向到房间列表）；将其设为入口页。
 
 ## 待决事项（需要你在需求澄清文档补充）
 - 选择 AI 接入方式：直连服务端 或 云函数。

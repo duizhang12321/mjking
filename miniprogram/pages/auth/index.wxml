@@ -1,0 +1,7 @@
+<view class="auth">
+  <view class="card">
+    <view class="title">进入应用前需要登录授权</view>
+    <view class="desc">用于标识房主与玩家（头像与昵称）。仅首次需要授权。</view>
+    <button class="btn" type="primary" bindtap="login">授权并进入</button>
+  </view>
+</view>
