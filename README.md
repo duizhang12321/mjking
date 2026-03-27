@@ -60,6 +60,19 @@ docs/
 - 登录授权需“用户触发”：在登录页点击“授权并进入”按钮弹出授权框；授权后进入应用。
  - 开发者工具提示：微信开发者工具在模拟环境中可能返回默认昵称“微信用户”和空头像；真机授权可获取真实头像与昵称。页面已在头像为空时回退使用 `<open-data type="userAvatarUrl">` 显示。
 
+## 规则模版（AI 使用依据）
+规则以“结构化 Schema + 可读模版文本”表示，AI 将据此算分。关键字段：
+- 桌面：`players`（人数）、`handSize`（手牌数）、`tiles`（牌组组成，如是否含风/箭/花，`totalTiles`）
+- 庄家：`continuousDealer`（连庄）、`dealerBonus`（自摸/胡牌加底）
+- 结算：`payMode`（一人付/三家付）、`basePoint`（底分）、`cap`（封顶番）
+- 抓鸟：`enabled`、`count`、`hitBonus`
+- 违例检查：`checkNoDeclare`（查大叫）、`checkWrongSuit`（查花猪）
+- 番型：`scoring.baseHands/melds/extras`（示例：平胡、自摸、对对胡、清一色、明杠、暗杠、绝张等）
+
+模版渲染：`miniprogram/rules/template.js:1` 的 `renderTemplateText(rule)` 将结构化规则渲染为人类可读文本，供 AI 直接消费。
+预置“川麻·血战到底”已内置并可编辑：`miniprogram/rules/template.js:1`。
+自定义规则支持两种方式：表单或自然语言描述后“渲染为模板”（当前解析包含抓鸟数量、手牌数、结算方式、变体关键字）。
+
 ## 开发测试：重置数据
 - 应用内：房间列表页顶部用户区域点击“清空数据”按钮，确认后将清除本地的用户、房间、规则等全部缓存并回到登录页。
 - 开发者工具：也可使用“清缓存”功能（会话/本地缓存），效果等同。

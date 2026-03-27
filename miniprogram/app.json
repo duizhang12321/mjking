@@ -4,6 +4,8 @@
     "pages/rooms/index",
     "pages/room/index",
     "pages/rules/index",
+    "pages/rules/detail",
+    "pages/rules/edit",
     "pages/index/index"
   ],
   "window": {

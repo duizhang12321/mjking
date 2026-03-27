@@ -67,7 +67,27 @@ function createRule(rule) { const rules = listRules(); rules.unshift(rule); set(
 function setSelectedRule(id) { set(KEYS.selectedRule, id) }
 function getSelectedRule() { try { return wx.getStorageSync(KEYS.selectedRule) || null } catch (e) { return null } }
 
-module.exports = { KEYS, listRooms, createRoom, getRoom, saveRoom, addPlayerToRoom, listRules, createRule, setSelectedRule, getSelectedRule }
+function updateRule(rule) {
+  const rules = listRules().map(r => (r.id === rule.id ? { ...r, ...rule } : r))
+  set(KEYS.rules, rules)
+  return rule
+}
+
+function deleteRule(id) {
+  const rules = listRules().filter(r => r.id !== id)
+  set(KEYS.rules, rules)
+}
+
+function ensurePresetRules(presetList) {
+  const rules = listRules()
+  if (rules.length === 0 && Array.isArray(presetList) && presetList.length) {
+    set(KEYS.rules, presetList)
+    return presetList
+  }
+  return rules
+}
+
+module.exports = { KEYS, listRooms, createRoom, getRoom, saveRoom, addPlayerToRoom, listRules, createRule, updateRule, deleteRule, setSelectedRule, getSelectedRule, ensurePresetRules }
 
 // 清空所有本地存储（开发测试用）
 function clearAll() {

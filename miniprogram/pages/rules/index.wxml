@@ -5,9 +5,15 @@
   </view>
   <view class="list">
     <block wx:for="{{rules}}" wx:key="id">
-      <view class="item" bindtap="selectRule" data-id="{{item.id}}">
+      <view class="item">
         <view class="name">{{item.name}}</view>
         <view class="sub">{{item.desc || '—'}}</view>
+        <view class="ops">
+          <button size="mini" data-id="{{item.id}}" bindtap="openDetail">查看</button>
+          <button size="mini" data-id="{{item.id}}" bindtap="editRule">编辑</button>
+          <button size="mini" type="warn" data-id="{{item.id}}" bindtap="deleteRule">删除</button>
+          <button wx:if="{{pick}}" size="mini" type="primary" data-id="{{item.id}}" bindtap="selectRule">选择</button>
+        </view>
       </view>
     </block>
     <view wx:if="{{rules.length===0}}" class="empty">暂无规则</view>

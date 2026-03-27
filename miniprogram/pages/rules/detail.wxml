@@ -1,0 +1,7 @@
+<view class="container">
+  <view class="title">{{rule.name}}</view>
+  <view class="meta">版本：{{rule.version || 'v1'}}</view>
+  <view class="block">
+    <text selectable="true">{{rule.templateText}}</text>
+  </view>
+</view>
