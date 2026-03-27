@@ -19,8 +19,23 @@ import (
 
 type Player struct{ UID, Name, Avatar string }
 type Round struct{ ID int64; TS int64; Score int; Desc, UserUID string }
-type Room struct{ ID string; Name string; CreatedAt int64; OwnerUid string; Players []Player; RuleId *string; Rounds []Round }
-type Rule struct{ ID, Name, Desc, Version string; Preset bool; TemplateMarkdown string }
+type Room struct{
+  ID string `json:"id"`
+  Name string `json:"name"`
+  CreatedAt int64 `json:"createdAt"`
+  OwnerUid string `json:"ownerUid"`
+  Players []Player `json:"players"`
+  RuleId *string `json:"ruleId"`
+  Rounds []Round `json:"rounds"`
+}
+type Rule struct{
+  ID string `json:"id"`
+  Name string `json:"name"`
+  Desc string `json:"desc"`
+  Version string `json:"version"`
+  Preset bool `json:"preset"`
+  TemplateMarkdown string `json:"templateMarkdown"`
+}
 
 var (
   rooms = map[string]*Room{}
@@ -190,7 +205,34 @@ func envOr(k, def string) string { if v := os.Getenv(k); v != "" { return v }; r
 
 func withCORS(next http.Handler) http.Handler { return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){ w.Header().Set("Access-Control-Allow-Origin", "*"); w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization"); w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS"); if r.Method == http.MethodOptions { w.WriteHeader(http.StatusNoContent); return }; next.ServeHTTP(w,r) }) }
 
-func withLogging(next http.Handler) http.Handler { return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){ log.Printf("%s %s from %s", r.Method, r.URL.Path, r.RemoteAddr); next.ServeHTTP(w, r) }) }
+type logResponseWriter struct{
+  http.ResponseWriter
+  status int
+  buf    bytes.Buffer
+}
+func (lrw *logResponseWriter) WriteHeader(code int){ lrw.status = code; lrw.ResponseWriter.WriteHeader(code) }
+func (lrw *logResponseWriter) Write(b []byte) (int, error){ lrw.buf.Write(b); return lrw.ResponseWriter.Write(b) }
+
+func truncate(s string, n int) string { if len(s) <= n { return s }; return s[:n] + "...(truncated)" }
+
+func withLogging(next http.Handler) http.Handler { return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){
+  ct := r.Header.Get("Content-Type")
+  reqPreview := ""
+  if strings.Contains(ct, "multipart/form-data") {
+    reqPreview = "[multipart]"
+  } else {
+    b, _ := io.ReadAll(r.Body)
+    reqPreview = string(b)
+    r.Body = io.NopCloser(bytes.NewReader(b))
+  }
+  lrw := &logResponseWriter{ResponseWriter: w, status: 200}
+  start := time.Now()
+  next.ServeHTTP(lrw, r)
+  dur := time.Since(start)
+  respPreview := lrw.buf.String()
+  log.Printf("%s %s from %s ct=%s req=%q -> %d in %s resp=%q",
+    r.Method, r.URL.Path, r.RemoteAddr, ct, truncate(reqPreview, 4096), lrw.status, dur, truncate(respPreview, 4096))
+}) }
 
 func main(){ rand.Seed(time.Now().UnixNano())
   loadState()
