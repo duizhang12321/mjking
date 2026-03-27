@@ -41,16 +41,6 @@ Page({
     return `${d.getFullYear()}-${(d.getMonth()+1).toString().padStart(2,'0')}-${d.getDate().toString().padStart(2,'0')} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`
   },
   chooseRule() { if(!this.data.isOwner){ wx.showToast({ title:'仅房主可设置规则', icon:'none' }); return } wx.navigateTo({ url: '/pages/rules/index?pick=1' }) },
-  addPlayer() {
-    if(!this.data.isOwner){ wx.showToast({ title:'仅房主可添加玩家', icon:'none' }); return }
-    wx.showModal({ title:'添加玩家', editable:true, placeholderText:'输入玩家名', success:(res)=>{
-      if(res.confirm && res.content){
-        const room = this.data.room
-        room.players.push({ uid:'p-'+Date.now(), name: res.content })
-        this.setData({ room }); store.saveRoom(room)
-      }
-    } })
-  },
   addManualRound() {
     wx.showModal({ title:'手动记分', editable:true, placeholderText:'输入本局分数', success:(res)=>{
       if(res.confirm && res.content){

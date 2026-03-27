@@ -29,17 +29,6 @@ Page({
       }
     })
   },
-  joinRoom(){
-    const u = user.getCurrentUser()
-    if(!u){ wx.showToast({ title:'请先点击上方“登录授权”按钮', icon:'none' }); return }
-    wx.showModal({ title:'加入房间', editable:true, placeholderText:'输入房间ID', success:(res)=>{
-      if(res.confirm && res.content){
-        const r = store.addPlayerToRoom(res.content, u)
-        if(r){ wx.navigateTo({ url: `/pages/room/index?id=${r.id}` }) }
-        else{ wx.showToast({ title:'房间不存在', icon:'none' }) }
-      }
-    }})
-  },
   openRoom(e) {
     const id = e.currentTarget.dataset.id
     wx.navigateTo({ url: `/pages/room/index?id=${id}` })

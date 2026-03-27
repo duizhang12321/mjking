@@ -12,7 +12,6 @@
       <block wx:for="{{room.players}}" wx:key="uid">
         <view class="player">{{item.name}}</view>
       </block>
-      <button size="mini" bindtap="addPlayer" wx:if="{{isOwner}}">添加玩家（房主）</button>
     </view>
   </view>
 

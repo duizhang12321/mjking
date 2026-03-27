@@ -35,6 +35,10 @@
   - 登录认证模式调整：
     - 当前仅本地认证：在登录页点击按钮调用 `wx.getUserProfile` 获取头像与昵称，写入本地缓存，不进行后端绑定。
     - 后端绑定能力保留在 `utils/auth.js:1`，待你提供后端地址后可随时切换。
+  - 交互调整：
+    - 移除房主“手动添加玩家”入口；玩家仅通过分享卡片进入房间并自动加入。
+    - 暂时移除“通过房间ID加入”的功能与入口。
+    - 移除自动化自测脚本与开关：`miniprogram/utils/selftest.js` 删除，`config.sample.js` 去除 `autoTest`。
   - 测试辅助：
     - 房间列表页支持“一键清空数据”按钮，调用 `wx.clearStorageSync` 清除本地用户、房间、规则等缓存：`miniprogram/pages/rooms/index.js:1`、`miniprogram/utils/storage.js:1`
     - 自动化自测：`miniprogram/app.js:1` 在 `autoTest` 开启时触发 `utils/selftest.js:1`，自动生成测试用户、房间与多局记录，便于快速验证。
