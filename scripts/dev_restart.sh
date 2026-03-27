@@ -34,7 +34,22 @@ start_backend() {
   mkdir -p "$DATA_DIR" "$LOG_DIR"
   pushd "$BACKEND_DIR" >/dev/null
   echo "[restart] 启动后端: PORT=$PORT DATA_DIR=$(pwd)/../../$DATA_DIR 日志=$LOG_FILE"
-  nohup env PORT="$PORT" DATA_DIR="$(pwd)/../../$DATA_DIR" VOLC_ENDPOINT="${VOLC_ENDPOINT:-}" VOLC_AUTH="${VOLC_AUTH:-}" LLM_ENDPOINT="${LLM_ENDPOINT:-}" LLM_AUTH="${LLM_AUTH:-}" go run . > "../../$LOG_FILE" 2>&1 &
+  # 优先使用 go build 生成可执行文件，然后运行；若本机无 go 且存在上次构建的二进制，则直接运行二进制
+  BACKEND_BIN="../../tmp/backend"
+  if command -v go >/dev/null 2>&1; then
+    echo "[restart] 编译后端二进制..."
+    go build -o "$BACKEND_BIN" .
+    nohup env PORT="$PORT" DATA_DIR="$(pwd)/../../$DATA_DIR" VOLC_ENDPOINT="${VOLC_ENDPOINT:-}" VOLC_AUTH="${VOLC_AUTH:-}" LLM_ENDPOINT="${LLM_ENDPOINT:-}" LLM_AUTH="${LLM_AUTH:-}" "$BACKEND_BIN" > "../../$LOG_FILE" 2>&1 &
+  else
+    if [ -x "$BACKEND_BIN" ]; then
+      echo "[restart] 未检测到 go，使用已存在的二进制运行"
+      nohup env PORT="$PORT" DATA_DIR="$(pwd)/../../$DATA_DIR" VOLC_ENDPOINT="${VOLC_ENDPOINT:-}" VOLC_AUTH="${VOLC_AUTH:-}" LLM_ENDPOINT="${LLM_ENDPOINT:-}" LLM_AUTH="${LLM_AUTH:-}" "$BACKEND_BIN" > "../../$LOG_FILE" 2>&1 &
+    else
+      echo "[restart] ERROR: 未检测到 go 且未找到可执行文件 $BACKEND_BIN"
+      popd >/dev/null
+      exit 1
+    fi
+  fi
   PID=$!
   popd >/dev/null
   echo "$PID" > "$PID_FILE"

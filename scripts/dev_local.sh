@@ -26,7 +26,21 @@ else
   # 在子目录启动并在主目录记录 PID
   mkdir -p "$LOG_DIR"
   pushd "$BACKEND_DIR" >/dev/null
-  nohup env PORT="$PORT" DATA_DIR="$(pwd)/../../$DATA_DIR" VOLC_ENDPOINT="${VOLC_ENDPOINT:-}" VOLC_AUTH="${VOLC_AUTH:-}" LLM_ENDPOINT="${LLM_ENDPOINT:-}" LLM_AUTH="${LLM_AUTH:-}" go run . > "../../$LOG_FILE" 2>&1 &
+  BACKEND_BIN="../../tmp/backend"
+  if command -v go >/dev/null 2>&1; then
+    echo "[dev] 编译后端二进制..."
+    go build -o "$BACKEND_BIN" .
+    nohup env PORT="$PORT" DATA_DIR="$(pwd)/../../$DATA_DIR" VOLC_ENDPOINT="${VOLC_ENDPOINT:-}" VOLC_AUTH="${VOLC_AUTH:-}" LLM_ENDPOINT="${LLM_ENDPOINT:-}" LLM_AUTH="${LLM_AUTH:-}" "$BACKEND_BIN" > "../../$LOG_FILE" 2>&1 &
+  else
+    if [ -x "$BACKEND_BIN" ]; then
+      echo "[dev] 未检测到 go，使用已存在的二进制运行"
+      nohup env PORT="$PORT" DATA_DIR="$(pwd)/../../$DATA_DIR" VOLC_ENDPOINT="${VOLC_ENDPOINT:-}" VOLC_AUTH="${VOLC_AUTH:-}" LLM_ENDPOINT="${LLM_ENDPOINT:-}" LLM_AUTH="${LLM_AUTH:-}" "$BACKEND_BIN" > "../../$LOG_FILE" 2>&1 &
+    else
+      echo "[dev] ERROR: 未检测到 go 且未找到可执行文件 $BACKEND_BIN"
+      popd >/dev/null
+      exit 1
+    fi
+  fi
   PID=$!
   popd >/dev/null
   echo "$PID" > "$PID_FILE"
