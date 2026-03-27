@@ -37,6 +37,7 @@
     - 后端绑定能力保留在 `utils/auth.js:1`，待你提供后端地址后可随时切换。
   - 测试辅助：
     - 房间列表页支持“一键清空数据”按钮，调用 `wx.clearStorageSync` 清除本地用户、房间、规则等缓存：`miniprogram/pages/rooms/index.js:1`、`miniprogram/utils/storage.js:1`
+    - 自动化自测：`miniprogram/app.js:1` 在 `autoTest` 开启时触发 `utils/selftest.js:1`，自动生成测试用户、房间与多局记录，便于快速验证。
 
 ## 待决事项（需要你在需求澄清文档补充）
 - 选择 AI 接入方式：直连服务端 或 云函数。

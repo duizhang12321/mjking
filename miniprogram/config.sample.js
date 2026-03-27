@@ -10,5 +10,7 @@ module.exports = {
     headers: {
       // 示例：Authorization: 'Bearer xxx', 'X-Custom-Token': '...' 等
     }
-  }
+  },
+  // 开发辅助：自动自测，生成示例用户、房间与对局（生产请关闭）
+  autoTest: true
 }
