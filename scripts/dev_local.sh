@@ -21,8 +21,13 @@ PID_FILE="dev_backend.pid"
 if [ -f "$PID_FILE" ] && kill -0 "$(cat "$PID_FILE" 2>/dev/null)" 2>/dev/null; then
   echo "[dev] 后端已在运行 (pid $(cat "$PID_FILE")); 跳过启动"
 else
-  (cd "$BACKEND_DIR" && nohup env PORT="$PORT" DATA_DIR="$(pwd)/../../$DATA_DIR" VOLC_ENDPOINT="${VOLC_ENDPOINT:-}" VOLC_AUTH="${VOLC_AUTH:-}" LLM_ENDPOINT="${LLM_ENDPOINT:-}" LLM_AUTH="${LLM_AUTH:-}" go run . > "../../$LOG_FILE" 2>&1 & echo $! > "../../$PID_FILE")
-  echo "[dev] 后端进程已启动，pid $(cat "$PID_FILE")，日志 $LOG_FILE"
+  # 在子目录启动并在主目录记录 PID
+  pushd "$BACKEND_DIR" >/dev/null
+  nohup env PORT="$PORT" DATA_DIR="$(pwd)/../../$DATA_DIR" VOLC_ENDPOINT="${VOLC_ENDPOINT:-}" VOLC_AUTH="${VOLC_AUTH:-}" LLM_ENDPOINT="${LLM_ENDPOINT:-}" LLM_AUTH="${LLM_AUTH:-}" go run . > "../../$LOG_FILE" 2>&1 &
+  PID=$!
+  popd >/dev/null
+  echo "$PID" > "$PID_FILE"
+  echo "[dev] 后端进程已启动，pid $PID，日志 $LOG_FILE"
 fi
 
 # 等待后端可用
@@ -36,10 +41,14 @@ for i in $(seq 1 30); do
   sleep 1
 done
 
+PID_OUT=""
+if [ -f "$PID_FILE" ]; then PID_OUT=$(cat "$PID_FILE"); fi
+
 echo "[dev] 完成：
-- 后端：$BASE_URL（日志：$LOG_FILE，pid：$(cat "$PID_FILE")）
+- 后端：$BASE_URL（日志：$LOG_FILE，pid：$PID_OUT）
 - 前端已由你手动配置 baseUrl 指向后端，无需脚本写入。
 
 常用操作：
 - 查看日志：tail -f $LOG_FILE
-- 停止后端：kill \"$(cat "$PID_FILE")\" 或删除 $PID_FILE 后重新启动"
+- 停止后端：[ -f $PID_FILE ] && kill \"$(cat $PID_FILE)\" || echo 'pid 文件不存在'
+"
