@@ -3,16 +3,16 @@
   <view class="block">
     <view class="label">规则：</view>
     <view class="value">{{ruleName || '未关联'}}</view>
-    <button size="mini" bindtap="chooseRule">关联规则</button>
+    <button size="mini" bindtap="chooseRule" wx:if="{{isOwner}}">关联规则（房主）</button>
   </view>
 
   <view class="block">
     <view class="label">玩家：</view>
     <view class="players">
-      <block wx:for="{{room.players}}" wx:key="name">
-        <view class="player">{{item}}</view>
+      <block wx:for="{{room.players}}" wx:key="uid">
+        <view class="player">{{item.name}}</view>
       </block>
-      <button size="mini" bindtap="addPlayer">添加玩家</button>
+      <button size="mini" bindtap="addPlayer" wx:if="{{isOwner}}">添加玩家（房主）</button>
     </view>
   </view>
 

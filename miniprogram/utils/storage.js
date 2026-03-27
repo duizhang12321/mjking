@@ -2,7 +2,8 @@
 
 const KEYS = {
   rooms: 'rooms',
-  rules: 'rules'
+  rules: 'rules',
+  selectedRule: 'selected_rule'
 }
 
 function get(key) {
@@ -28,9 +29,12 @@ function listRooms() {
   return get(KEYS.rooms)
 }
 
-function createRoom(name) {
+function createRoom(name, owner) {
   const rooms = listRooms()
-  const room = { id: uuid(), name, createdAt: Date.now(), players: [], ruleId: null, rounds: [] }
+  const room = { id: uuid(), name, createdAt: Date.now(), ownerUid: owner?.uid || '', players: [], ruleId: null, rounds: [] }
+  if (owner) {
+    room.players.push({ uid: owner.uid, name: owner.nickName || '未命名', avatar: owner.avatarUrl || '' })
+  }
   rooms.unshift(room)
   set(KEYS.rooms, rooms)
   return room
@@ -45,9 +49,22 @@ function saveRoom(room) {
   set(KEYS.rooms, rooms)
 }
 
+function addPlayerToRoom(id, player) {
+  const room = getRoom(id)
+  if (!room) return null
+  if (!room.players) room.players = []
+  const exists = room.players.some(p => p.uid === player.uid)
+  if (!exists) {
+    room.players.push({ uid: player.uid, name: player.nickName || player.name || '未命名', avatar: player.avatarUrl || player.avatar || '' })
+    saveRoom(room)
+  }
+  return room
+}
+
 // Rules
 function listRules() { return get(KEYS.rules) }
 function createRule(rule) { const rules = listRules(); rules.unshift(rule); set(KEYS.rules, rules); return rule }
+function setSelectedRule(id) { set(KEYS.selectedRule, id) }
+function getSelectedRule() { try { return wx.getStorageSync(KEYS.selectedRule) || null } catch (e) { return null } }
 
-module.exports = { KEYS, listRooms, createRoom, getRoom, saveRoom, listRules, createRule }
-
+module.exports = { KEYS, listRooms, createRoom, getRoom, saveRoom, addPlayerToRoom, listRules, createRule, setSelectedRule, getSelectedRule }

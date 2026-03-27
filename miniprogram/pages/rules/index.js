@@ -16,8 +16,8 @@ Page({
   selectRule(e){
     if(!this.data.pick) return
     const id = e.currentTarget.dataset.id
-    // 返回房间页面并设置关联（通过事件通道或重进房间手动选择，简化为提示）
-    wx.showToast({ title:'规则已选择：'+id, icon:'none' })
+    store.setSelectedRule(id)
+    wx.showToast({ title:'规则已选择', icon:'none' })
     wx.navigateBack()
   }
 })

@@ -22,6 +22,11 @@
     - `miniprogram/utils/ai.js:1`、`miniprogram/config.sample.js:1`、`miniprogram/utils/storage.js:1`
   - 更新 `miniprogram/app.json:1` 页面顺序，将房间列表设为入口；更新 `README.md:1` 页面说明与接入方式。
   - 启用 Git post-commit 自动推送钩子：`/.git/hooks/post-commit:1`（每次提交后自动 `git push origin <branch>`）
+  - 多用户房间与房主权限：
+    - 用户会话：`miniprogram/utils/user.js:1`（微信头像昵称）
+    - 房间支持加入/显示房间ID：`miniprogram/pages/rooms/index.*`
+    - 房主可关联规则、添加玩家；玩家仅手动或拍照记分：`miniprogram/pages/room/index.*`
+    - 轮次记录携带操作者：`userUid`
 
 ## 待决事项（需要你在需求澄清文档补充）
 - 选择 AI 接入方式：直连服务端 或 云函数。
