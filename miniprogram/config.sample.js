@@ -2,6 +2,9 @@
 
 module.exports = {
   baseUrl: '', // 若使用自建后端，填入基础 URL，如 https://your.domain
+  headers: {
+    // 可选：公共请求头（例如鉴权）
+  },
   volc: {
     endpoint: '', // 火山引擎图片记分接口地址
     headers: {
@@ -9,4 +12,3 @@ module.exports = {
     }
   }
 }
-

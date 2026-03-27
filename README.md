@@ -44,6 +44,12 @@ docs/
   - 无配置：回退到本地模拟 `scoreImage`
 - 配置：复制 `miniprogram/config.sample.js:1` 为 `miniprogram/config.js` 并填写真实参数（切勿提交密钥）。
 
+## 真实登录态接入
+- 触发方式：登录页按钮点击后调用 `wx.login` 获取 `code`，随后调用 `wx.getUserProfile` 获取头像/昵称。
+- 上报绑定：`miniprogram/utils/auth.js:1` 将 `{ code, nickName, avatarUrl }` POST 到 `baseUrl + /api/auth/bind`，后端返回 `{ userId, token }`。
+- 本地存储：`miniprogram/utils/user.js:1` 将返回的 `userId/token` 合并到当前用户对象（`serverUserId`、`token`），用于后续鉴权与合规。
+- 失败回退：后端绑定失败时，回退为本地登录并提示“后端绑定失败，已本地登录”。
+
 ## 页面与流程
 
 - 登录授权页：`miniprogram/pages/auth/index.*` 首次进入必须授权，成功后进入房间列表
@@ -66,6 +72,7 @@ docs/
 
 - 梳理并落地麻将规则细则与分值表；完善规则绑定与验证
 - 对接火山引擎真实接口（签名、鉴权、响应结构映射）
+- 后端提供 `/api/auth/bind` 与鉴权体系（校验 `code` 换取 `openid/unionid`，返回 `userId/token`），完善数据合规与隐私策略
 - 完善数据模型（玩家、局次、结算与账本）与导出能力
 - 错误处理与重试、隐私合规与图片生命周期管理
 - UI 细化（维度展示、战绩统计）与埋点监控
