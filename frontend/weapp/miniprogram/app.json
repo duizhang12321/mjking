@@ -1,0 +1,17 @@
+{
+  "pages": [
+    "pages/auth/index",
+    "pages/rooms/index",
+    "pages/room/index",
+    "pages/rules/index",
+    "pages/rules/detail",
+    "pages/rules/create",
+    "pages/index/index"
+  ],
+  "window": {
+    "navigationBarTitleText": "AI图片评分",
+    "navigationBarBackgroundColor": "#ffffff",
+    "navigationBarTextStyle": "black",
+    "backgroundTextStyle": "light"
+  }
+}

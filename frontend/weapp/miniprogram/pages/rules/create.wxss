@@ -1,0 +1,8 @@
+.title { font-size: 18px; font-weight: 600; margin-bottom: 12px; }
+.form .row { margin-bottom: 10px; }
+.label { color:#86909c; display:block; margin-bottom:6px; }
+.input { background:#fff; border:1px solid #e5e6eb; border-radius:8px; padding:8px; }
+.textarea { min-height: 80px; background:#fff; border:1px solid #e5e6eb; border-radius:8px; padding:8px; }
+.ops { display:flex; gap:8px; margin-top:8px; }
+.preview { margin-top: 14px; background:#fff; border:1px solid #e5e6eb; border-radius:8px; padding:12px; }
+.subtitle { font-weight:600; margin-bottom:6px; }

@@ -1,0 +1,5 @@
+<view class="container">
+  <view class="title">{{rule.name}}</view>
+  <view class="meta">版本：{{rule.version || 'v1'}}</view>
+  <rich-text nodes="{{html}}"></rich-text>
+</view>

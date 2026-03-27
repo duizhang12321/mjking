@@ -1,0 +1,21 @@
+<view class="container">
+  <view class="title">自定义/预置规则</view>
+  <view class="actions">
+    <button type="primary" bindtap="createRule">新建规则</button>
+  </view>
+  <view class="list">
+    <block wx:for="{{rules}}" wx:key="id">
+      <view class="item">
+        <view class="name">{{item.name}} <text wx:if="{{item.preset}}" class="badge">预置</text></view>
+        <view class="sub">{{item.desc || '—'}}</view>
+        <view class="ops">
+          <button size="mini" data-id="{{item.id}}" bindtap="openDetail">查看</button>
+          <!-- 编辑功能暂时移除，仅支持新建与删除 -->
+          <button wx:if="{{!item.preset}}" size="mini" type="warn" data-id="{{item.id}}" bindtap="deleteRule">删除</button>
+          <button wx:if="{{pick}}" size="mini" type="primary" data-id="{{item.id}}" bindtap="selectRule">选择</button>
+        </view>
+      </view>
+    </block>
+    <view wx:if="{{rules.length===0}}" class="empty">暂无规则</view>
+  </view>
+</view>

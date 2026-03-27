@@ -1,0 +1,2 @@
+.title { font-size: 18px; font-weight: 600; margin-bottom: 6px; }
+.meta { color:#86909c; margin-bottom: 10px; }

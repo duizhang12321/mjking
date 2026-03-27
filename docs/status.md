@@ -9,6 +9,7 @@
   - AI 接入封装 `miniprogram/utils/ai.js:1`（火山引擎优先，其次后端，最后回退本地模拟）。
   - 配置模板 `miniprogram/config.sample.js:1`，避免提交敏感信息。
 - 入口页面：`miniprogram/pages/rooms/index.wxml:1`
+ - 目录重构：前端迁移至 `frontend/weapp/`，后端新增 `backend/go/`；项目根 README 汇总前后端对接方式。
 - API 封装：`miniprogram/utils/api.js:1`（默认 `scoreImage` 使用本地模拟；直连后端用 `uploadAndScore` 并配置 `BASE_URL`）。
 - 文档：`README.md:1`（项目指南）、`docs/requirements.md:1`（需求澄清模板）。
 
@@ -56,9 +57,10 @@
 ## 交接须知（给后续接手的 Agent）
 - 开发者工具：导入当前目录，`AppID` 可先用 `touristappid`。
 - 关键文件：
-  - 页面入口：`miniprogram/pages/rooms/index.wxml:1`、房间详情 `miniprogram/pages/room/index.js:1`
-  - AI 封装：`miniprogram/utils/ai.js:1` 与配置 `miniprogram/config.sample.js:1`
-  - API 封装：`miniprogram/utils/api.js:1`（后端直连时使用）。
+  - 页面入口：`frontend/weapp/miniprogram/pages/rooms/index.wxml:1`、房间详情 `frontend/weapp/miniprogram/pages/room/index.js:1`
+  - AI 封装：`frontend/weapp/miniprogram/utils/ai.js:1` 与配置 `frontend/weapp/miniprogram/config.sample.js:1`
+  - 数据层：`frontend/weapp/miniprogram/utils/storage.js:1`（当配置了 `baseUrl` 时，前端改为访问后端 API）。
+  - 后端：`backend/go/main.go:1`（内存实现的占位 API），`backend/docs/api.md:1`（接口文档）。
 - 验证流程：新建房间 -> 添加玩家 -> 手动或拍照 AI 记分 -> 查看记录。
 - 需求来源：`docs/requirements.md:1` 为唯一事实来源；以该文档为准推进实现与验收。
 
