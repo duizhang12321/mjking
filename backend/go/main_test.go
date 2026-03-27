@@ -17,6 +17,9 @@ func newServer() *httptest.Server {
   mux.HandleFunc("/api/rules/", handleRule)
   mux.HandleFunc("/api/ai/score", handleAIScore)
   mux.HandleFunc("/api/ai/rule-markdown", handleAIRuleMarkdown)
+  mux.HandleFunc("/api/score/execute", handleScoreExecute)
+  mux.HandleFunc("/api/rules/session/start", handleRuleSessionStart)
+  mux.HandleFunc("/api/rules/session/", handleRuleSessionMessage)
   return httptest.NewServer(mux)
 }
 
@@ -83,4 +86,11 @@ func TestAIEndpoints(t *testing.T){
   if resp.StatusCode != http.StatusNotImplemented && resp.StatusCode != http.StatusOK { t.Fatalf("ai score status=%d", resp.StatusCode) }
   resp, _ = httpDo(t, http.MethodPost, srv.URL+"/api/ai/rule-markdown", map[string]string{"prompt":"四人血战到底"})
   if resp.StatusCode != http.StatusNotImplemented && resp.StatusCode != http.StatusOK { t.Fatalf("ai rule md status=%d", resp.StatusCode) }
+  // execute scoring placeholder
+  resp, data := httpDo(t, http.MethodPost, srv.URL+"/api/score/execute", map[string]any{"input": map[string]any{"tiles": []any{1,2,3}}})
+  if resp.StatusCode != http.StatusOK { t.Fatalf("score exec status=%d", resp.StatusCode) }
+  var s map[string]any; _ = json.Unmarshal(data, &s); if _, ok := s["score"]; !ok { t.Fatalf("score missing") }
+  // sessions
+  resp, _ = httpDo(t, http.MethodPost, srv.URL+"/api/rules/session/start", map[string]string{"prompt":"规则"})
+  if resp.StatusCode != http.StatusNotImplemented && resp.StatusCode != http.StatusOK { t.Fatalf("session start status=%d", resp.StatusCode) }
 }

@@ -199,7 +199,52 @@ func main(){ rand.Seed(time.Now().UnixNano())
   mux.HandleFunc("/api/rules/", handleRule)
   mux.HandleFunc("/api/ai/score", handleAIScore)
   mux.HandleFunc("/api/ai/rule-markdown", handleAIRuleMarkdown)
+  // scoring engine: execute with structured input
+  mux.HandleFunc("/api/score/execute", handleScoreExecute)
+  // rule creation multi-turn session (LLM-guided)
+  mux.HandleFunc("/api/rules/session/start", handleRuleSessionStart)
+  mux.HandleFunc("/api/rules/session/", handleRuleSessionMessage)
   addr := ":" + envOr("PORT", "8080")
   log.Println("backend listening on", addr, "dataDir=", dataDir)
   log.Fatal(http.ListenAndServe(addr, withCORS(mux)))
+}
+
+// --- Scoring engine placeholder ---
+// POST /api/score/execute { ruleId?:string, templateMarkdown?:string, input:{ tiles:any, context?:any } }
+func handleScoreExecute(w http.ResponseWriter, r *http.Request){
+  if r.Method != http.MethodPost { w.WriteHeader(http.StatusMethodNotAllowed); return }
+  // TODO: implement universal mahjong scoring engine
+  var payload map[string]any
+  if err := json.NewDecoder(r.Body).Decode(&payload); err != nil { badReq(w, "invalid json"); return }
+  // placeholder: echo a deterministic mock based on tiles count
+  input := payload["input"].(map[string]any)
+  tiles := input["tiles"]
+  count := 0
+  switch t := tiles.(type) {
+  case []any:
+    count = len(t)
+  case map[string]any:
+    for range t { count++ }
+  }
+  score := 10 + (count % 10)
+  jsonResp(w, map[string]any{"score": score, "detail": map[string]any{"mock": true, "tilesCount": count}})
+}
+
+// --- Rule creation sessions (LLM multi-turn) ---
+// POST /api/rules/session/start { prompt:string }
+func handleRuleSessionStart(w http.ResponseWriter, r *http.Request){
+  if r.Method != http.MethodPost { w.WriteHeader(http.StatusMethodNotAllowed); return }
+  if llmEndpoint == "" { w.WriteHeader(http.StatusNotImplemented); jsonResp(w, map[string]string{"message":"LLM_ENDPOINT not configured"}); return }
+  // TODO: call LLM to init conversation; return sessionId
+  sid := "sess-" + randomID()
+  jsonResp(w, map[string]string{"sessionId": sid})
+}
+
+// POST /api/rules/session/:id/message { prompt:string }
+func handleRuleSessionMessage(w http.ResponseWriter, r *http.Request){
+  if r.Method != http.MethodPost { w.WriteHeader(http.StatusMethodNotAllowed); return }
+  if !strings.HasPrefix(r.URL.Path, "/api/rules/session/") { notFound(w); return }
+  if llmEndpoint == "" { w.WriteHeader(http.StatusNotImplemented); jsonResp(w, map[string]string{"message":"LLM_ENDPOINT not configured"}); return }
+  // TODO: maintain conversation state; for now just proxy single turn to /api/ai/rule-markdown
+  handleAIRuleMarkdown(w, r)
 }
